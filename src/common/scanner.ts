@@ -1,4 +1,95 @@
+import { SourceFile } from './source';
+
 /**
  * A simple, low-level scanner for incrementally reading streaming text.
  */
-export class Scanner {}
+export class Scanner {
+  // File or content currently being read.
+  private readonly input: SourceFile;
+
+  // Current position in the scanner.
+  private mPosition = 0;
+
+  constructor(input: string | SourceFile) {
+    if (typeof input === 'string') {
+      this.input = new SourceFile(input);
+    } else {
+      this.input = input;
+    }
+  }
+
+  /**
+   * A reference to the content data.
+   */
+  private get contents(): string {
+    return this.input.contents;
+  }
+
+  /**
+   * Length of the input in the scanner.
+   */
+  get length(): number {
+    return this.input.length;
+  }
+
+  /**
+   * Current position in the scanner.
+   */
+  get position(): number {
+    return this.mPosition;
+  }
+
+  /**
+   * Returns a substring of the underlying data of start -> end.
+   *
+   * @param end
+   * @param start
+   */
+  substring(end = this.length, start = this.mPosition): string {
+    return this.contents.substring(start, end - start + 1);
+  }
+
+  /**
+   * Returns whether additional characters have yet to be scanned.
+   */
+  hasNext(): boolean {
+    return this.mPosition < this.length;
+  }
+
+  /**
+   * Returns whether pattern is the next character, substring, or function.
+   *
+   * @param pattern
+   */
+  match(pattern: string | number | ((char: number) => boolean)): boolean {
+    if (typeof pattern === 'string') {
+      if (this.contents.startsWith(pattern, this.mPosition)) {
+        this.mPosition += pattern.length;
+        return true;
+      } else {
+        return false;
+      }
+    }
+    const next = this.peek();
+    if (typeof pattern == 'number' ? next === pattern : pattern(next)) {
+      this.mPosition++;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Returns the next character and advances the position counter.
+   */
+  advance(): number {
+    return this.contents.charCodeAt(this.mPosition++);
+  }
+
+  /**
+   * Returns the next character.
+   */
+  peek(offset = 0): number {
+    return this.contents.charCodeAt(this.mPosition + offset);
+  }
+}
