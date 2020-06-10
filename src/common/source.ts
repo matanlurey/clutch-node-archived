@@ -104,7 +104,7 @@ export class SourceFile {
       let c = contents.charCodeAt(i);
       if (c === Characters.$CR) {
         const j = i + 1;
-        if (j >= length || contents.charCodeAt(j) !== Characters.$LF) {
+        if (j >= length || contents.charCodeAt(j) === Characters.$LF) {
           c = Characters.$LF;
         }
       }
@@ -123,17 +123,12 @@ export class SourceFile {
   computeLineAndColumn(offset: number): [number, number] {
     this.assertValidOffset(offset);
     const lineStarts = this.computeLineStarts();
-    let line;
     if (offset < lineStarts[0]) {
-      line = 0;
-    } else if (offset >= lineStarts[lineStarts.length - 1]) {
-      line = lineStarts.length;
-    } else {
-      line = binarySearch(lineStarts, offset);
+      return [0, offset];
     }
-    console.log(lineStarts, line);
-    const start = lineStarts[line - 1] || 0;
-    return [line, offset - start];
+    const line = binarySearch(lineStarts, offset);
+    const start = lineStarts[line];
+    return [line + 1, Math.abs(start - offset)];
   }
 
   /**
