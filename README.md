@@ -17,3 +17,11 @@ _Clutch_'s goals:
 - Make functional programming a delight but keep aproachable to traditional use.
 - Defaults that prefer immutability and optimizations.
 - Low overhead compilation and interpoability to and with JavaScript.
+
+## TODO
+
+### Lexer
+
+- [ ] Scan hyphens prefixing numbers.
+- [ ] Scan hex and E-prefixed numbers.
+- [ ] Scan identifiers or keywords, including `true` or `false`.
