@@ -14,15 +14,28 @@ export const enum Characters {
   $8 = $7 + 1,
   $9 = $8 + 1,
 
+  // Letters.
+  $A = 65,
+  $Z = 90,
+  $a = 97,
+  $z = 122,
+
   // Symbols.
-  $LPAREN = 40,
-  $RPAREN = 41,
+  $EXCLAIM = 33,
+  $PERCENT = 37,
+  $STAR = 42,
+  $PLUS = 43,
   $HYPHEN = 45,
   $PERIOD = 46,
+  $RSLASH = 47,
+  $EQUALS = 61,
+  $LPAREN = 40,
+  $RPAREN = 41,
   $LANGLE = 60,
   $RANGLE = 62,
   $LCURLY = 123,
   $RCURLY = 125,
+  $UNDERSCORE = 95,
 
   // Misc.
   $TAB = 9,
@@ -60,4 +73,14 @@ export function isWhiteSpace(character: number): boolean {
  */
 export function isDigit(character: number): boolean {
   return character >= Characters.$0 && character <= Characters.$9;
+}
+
+/**
+ * Returns whether @param character is considered a letter.
+ */
+export function isLetter(character: number): boolean {
+  return (
+    (character >= Characters.$A && character <= Characters.$Z) ||
+    (character >= Characters.$a && character <= Characters.$z)
+  );
 }

@@ -1,6 +1,24 @@
 import { Scanner } from '../../src/common/scanner';
 import { Lexer } from '../../src/compiler/lexer/lexer';
-import { $EOF, $Number, Type } from '../../src/compiler/lexer/tokens';
+import {
+  $Add,
+  $Assign,
+  $Boolean,
+  $CloseCurly,
+  $CloseParen,
+  $Divide,
+  $Dot,
+  $EOF,
+  $Modulus,
+  $Multiply,
+  $Not,
+  $NotEquals,
+  $Number,
+  $OpenCurly,
+  $OpenParen,
+  $Subtract as $Minus,
+  Type,
+} from '../../src/compiler/lexer/tokens';
 
 let lexer!: Lexer;
 
@@ -53,16 +71,111 @@ describe('should scan a number: ', () => {
   });
 });
 
-describe('should reject invalid numbers: ', () => {
-  it('3.1.4', () => {
-    expect(() => tokenize('3.1.4')).toThrowError('"." at 3');
+describe('should scan a boolean: ', () => {
+  it('true', () => {
+    expect(tokenize('true')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Boolean, lexeme: 'true' },
+      { offset: 4, type: $EOF, lexeme: '' },
+    ]);
   });
 
-  it('30a', () => {
-    expect(() => tokenize('30a')).toThrowError('"a" at 2');
+  it('false', () => {
+    expect(tokenize('false')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Boolean, lexeme: 'false' },
+      { offset: 5, type: $EOF, lexeme: '' },
+    ]);
+  });
+});
+
+describe('should scan', () => {
+  it('(', () => {
+    expect(tokenize('(')).toEqual<Tokenish[]>([
+      { offset: 0, type: $OpenParen, lexeme: '(' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
   });
 
-  it('3.a', () => {
-    expect(() => tokenize('3.a')).toThrowError('"a" at 2');
+  it(')', () => {
+    expect(tokenize(')')).toEqual<Tokenish[]>([
+      { offset: 0, type: $CloseParen, lexeme: ')' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('{', () => {
+    expect(tokenize('{')).toEqual<Tokenish[]>([
+      { offset: 0, type: $OpenCurly, lexeme: '{' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('}', () => {
+    expect(tokenize('}')).toEqual<Tokenish[]>([
+      { offset: 0, type: $CloseCurly, lexeme: '}' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('.', () => {
+    expect(tokenize('.')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Dot, lexeme: '.' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('+', () => {
+    expect(tokenize('+')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Add, lexeme: '+' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('-', () => {
+    expect(tokenize('-')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Minus, lexeme: '-' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('*', () => {
+    expect(tokenize('*')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Multiply, lexeme: '*' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('/', () => {
+    expect(tokenize('/')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Divide, lexeme: '/' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('%', () => {
+    expect(tokenize('%')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Modulus, lexeme: '%' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('=', () => {
+    expect(tokenize('=')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Assign, lexeme: '=' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('!', () => {
+    expect(tokenize('!')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Not, lexeme: '!' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('!=', () => {
+    expect(tokenize('!=')).toEqual<Tokenish[]>([
+      { offset: 0, type: $NotEquals, lexeme: '!=' },
+      { offset: 2, type: $EOF, lexeme: '' },
+    ]);
   });
 });

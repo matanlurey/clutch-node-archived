@@ -18,10 +18,14 @@ _Clutch_'s goals:
 - Defaults that prefer immutability and optimizations.
 - Low overhead compilation and interpoability to and with JavaScript.
 
+## Grammar
+
+See [docs/grammar.md](docs/grammar.md).
+
 ## TODO
 
 ### Lexer
 
 - [ ] Scan hyphens prefixing numbers.
-- [ ] Scan hex and E-prefixed numbers.
-- [ ] Scan identifiers or keywords, including `true` or `false`.
+- [ ] Scan hex (`0xN`), octal (`0oN`), binary (`0bN`) numbers.
+- [x] Scan identifiers or keywords, including `true` or `false`.

@@ -1,32 +1,37 @@
-import { isDigit, isNewLine, isWhiteSpace } from '../../src/common/string';
+import {
+  isDigit,
+  isLetter,
+  isNewLine,
+  isWhiteSpace,
+} from '../../src/common/string';
 
-describe('isNewLine', () => {
-  it('recognizes \\n', () => {
+describe('isNewLine should', () => {
+  it('recognize \\n', () => {
     expect(isNewLine('\n'.charCodeAt(0))).toBeTruthy();
   });
 
-  it('recognizes \\r', () => {
+  it('recognize \\r', () => {
     expect(isNewLine('\r'.charCodeAt(0))).toBeTruthy();
   });
 });
 
-describe('isWhiteSpace', () => {
-  it('recognizes spaces', () => {
+describe('isWhiteSpace should', () => {
+  it('recognize spaces', () => {
     expect(isWhiteSpace(' '.charCodeAt(0))).toBeTruthy();
   });
 
-  it('recognizes tabs', () => {
+  it('recognize tabs', () => {
     expect(isWhiteSpace('\t'.charCodeAt(0))).toBeTruthy();
   });
 
-  it('recognizes new lines', () => {
+  it('recognize new lines', () => {
     expect(isWhiteSpace('\n'.charCodeAt(0))).toBeTruthy();
     expect(isWhiteSpace('\r'.charCodeAt(0))).toBeTruthy();
   });
 });
 
 describe('isDigit', () => {
-  test('recognizes 0...9', () => {
+  it('should recognize 0...9', () => {
     expect(isDigit('0'.charCodeAt(0))).toBeTruthy();
     expect(isDigit('1'.charCodeAt(0))).toBeTruthy();
     expect(isDigit('2'.charCodeAt(0))).toBeTruthy();
@@ -38,4 +43,16 @@ describe('isDigit', () => {
     expect(isDigit('8'.charCodeAt(0))).toBeTruthy();
     expect(isDigit('9'.charCodeAt(0))).toBeTruthy();
   });
+});
+
+it('isLetter should recognize A-Z', () => {
+  for (let i = 'A'.charCodeAt(0); i <= 'Z'.charCodeAt(0); i++) {
+    expect(isLetter(i)).toBeTruthy();
+  }
+});
+
+it('isLetter should recognize a-z', () => {
+  for (let i = 'a'.charCodeAt(0); i <= 'z'.charCodeAt(0); i++) {
+    expect(isLetter(i)).toBeTruthy();
+  }
 });

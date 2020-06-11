@@ -1,6 +1,38 @@
 import { Scanner } from '../../common/scanner';
-import { Characters, isDigit, isWhiteSpace } from '../../common/string';
-import { $EOF, $Number, Token, Type } from './tokens';
+import {
+  Characters,
+  isDigit,
+  isLetter,
+  isWhiteSpace,
+} from '../../common/string';
+import {
+  $Add,
+  $Assign,
+  $Boolean,
+  $CloseCurly,
+  $CloseParen,
+  $Divide,
+  $Dot,
+  $EOF,
+  $Modulus,
+  $Multiply,
+  $Not,
+  $NotEquals,
+  $Number,
+  $OpenCurly,
+  $OpenParen,
+  $Subtract,
+  Token,
+  Type,
+} from './tokens';
+
+function isIdentifierStart(character: number): boolean {
+  return isLetter(character) || character === Characters.$UNDERSCORE;
+}
+
+function isIdentifier(character: number): boolean {
+  return isIdentifierStart(character) || isDigit(character);
+}
 
 /**
  * Tokenizees and returns a program as a series of tokens.
@@ -26,6 +58,32 @@ export class Lexer {
   private scanToken(): Token | undefined {
     const character = this.program.advance();
     switch (character) {
+      case Characters.$LPAREN: // (
+        return this.createToken($OpenParen);
+      case Characters.$RPAREN: // )
+        return this.createToken($CloseParen);
+      case Characters.$LCURLY: // {
+        return this.createToken($OpenCurly);
+      case Characters.$RCURLY: // }
+        return this.createToken($CloseCurly);
+      case Characters.$PERIOD: // .
+        return this.createToken($Dot);
+      case Characters.$PLUS: // +
+        return this.createToken($Add);
+      case Characters.$HYPHEN: // -
+        return this.createToken($Subtract);
+      case Characters.$STAR: // *
+        return this.createToken($Multiply);
+      case Characters.$RSLASH: // /
+        return this.createToken($Divide);
+      case Characters.$PERCENT: // %
+        return this.createToken($Modulus);
+      case Characters.$EQUALS: // =
+        return this.createToken($Assign);
+      case Characters.$EXCLAIM: // ! or !=
+        return this.createToken(
+          this.program.match(Characters.$EQUALS) ? $NotEquals : $Not,
+        );
       default:
         if (isWhiteSpace(character)) {
           this.position = this.program.position;
@@ -33,6 +91,9 @@ export class Lexer {
         }
         if (isDigit(character)) {
           return this.scanNumber();
+        }
+        if (isIdentifierStart(character)) {
+          return this.scanIdentifierOrKeyword();
         }
         this.error();
     }
@@ -57,6 +118,21 @@ export class Lexer {
       this.program.advance();
     }
     return this.scanDigits();
+  }
+
+  /**
+   * Scans any tokens that are valid identifiers.
+   */
+  private scanIdentifierOrKeyword(): Token {
+    this.scanPredicate(isIdentifier);
+    const identifierOrKeyword = this.substring();
+    switch (identifierOrKeyword) {
+      case 'true':
+      case 'false':
+        return this.createToken($Boolean, identifierOrKeyword);
+      default:
+        return this.error();
+    }
   }
 
   /**
@@ -106,6 +182,6 @@ export class Lexer {
   private error(offset = this.position, length = 1): never {
     const string = this.program.substring(offset, offset + length);
     console.log({ offset, length, string });
-    throw new Error(`Unexpected token: "${string}" at ${offset}.`);
+    throw new Error(`Unexpected token: \`${string}\` at ${offset}.`);
   }
 }

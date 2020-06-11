@@ -15,6 +15,100 @@ export class Token {
   ) {}
 }
 
+export const $Dot: Operator = {
+  kind: 'operator',
+  name: '.',
+};
+
+export const $Not: Operator = {
+  kind: 'operator',
+  name: '!',
+};
+
+export const $Add: Operator = {
+  kind: 'operator',
+  name: '+',
+};
+
+export const $Subtract: Operator = {
+  kind: 'operator',
+  name: '-',
+};
+
+export const $Multiply: Operator = {
+  kind: 'operator',
+  name: '*',
+};
+
+export const $Divide: Operator = {
+  kind: 'operator',
+  name: '/',
+};
+
+export const $Modulus: Operator = {
+  kind: 'operator',
+  name: '%',
+};
+
+export const $Assign: Operator = {
+  kind: 'operator',
+  name: '=',
+};
+
+export const $Equals: Operator = {
+  kind: 'operator',
+  name: '==',
+};
+
+export const $NotEquals: Operator = {
+  kind: 'operator',
+  name: '!=',
+};
+
+export interface Operator {
+  readonly kind: 'operator';
+  readonly name: '.' | '!' | '+' | '-' | '*' | '/' | '%' | '=' | '==' | '!=';
+}
+
+// -----------------------------------------------------------------------------
+
+export interface Pair {
+  readonly kind: 'pair';
+  readonly name: '(' | ')' | '{' | '}' | '<' | '>';
+}
+
+export const $OpenParen: Pair = {
+  kind: 'pair',
+  name: '(',
+};
+
+export const $CloseParen: Pair = {
+  kind: 'pair',
+  name: ')',
+};
+
+export const $OpenCurly: Pair = {
+  kind: 'pair',
+  name: '{',
+};
+
+export const $CloseCurly: Pair = {
+  kind: 'pair',
+  name: '}',
+};
+
+export const $OpenAngle: Pair = {
+  kind: 'pair',
+  name: '<',
+};
+
+export const $CloseAngle: Pair = {
+  kind: 'pair',
+  name: '>',
+};
+
+// -----------------------------------------------------------------------------
+
 export interface Literal {
   readonly kind: 'literal';
   readonly name: 'Boolean' | 'String' | 'Number';
@@ -50,4 +144,4 @@ export const $EOF: Marker = {
 /**
  * Supported implementations of token types.
  */
-export type Type = Literal | Marker;
+export type Type = Literal | Marker | Operator | Pair;
