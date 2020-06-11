@@ -45,14 +45,14 @@ export class Scanner {
    * @param end
    * @param start
    */
-  substring(end = this.length, start = this.mPosition): string {
-    return this.contents.substring(start, end - start + 1);
+  substring(start = this.mPosition, end = this.length - start): string {
+    return this.contents.substring(start, end);
   }
 
   /**
    * Returns whether additional characters have yet to be scanned.
    */
-  hasNext(): boolean {
+  get hasNext(): boolean {
     return this.mPosition < this.length;
   }
 
