@@ -1,6 +1,6 @@
 import { Token } from '../../../lexer/token';
+import { AstVisitor } from '../../visitor/visitor';
 import { BinaryOperator, Expression } from '../ast';
-import { AstVisitor } from '../visitor';
 
 /**
  * Represents a binary expression.

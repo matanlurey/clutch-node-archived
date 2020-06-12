@@ -30,6 +30,10 @@ export class StringSpan {
   get length(): number {
     return this.text.length;
   }
+
+  toString(): string {
+    return `${this.line}:${this.column}:${this.text}`;
+  }
 }
 
 /**
@@ -64,6 +68,12 @@ export class FileSpan implements StringSpan {
 
   get column(): number {
     return this.computeLineAndColumn()[1];
+  }
+
+  toString(): string {
+    return `${this.file.url || '<Unknown>'}:${this.line}:${this.column}:${
+      this.text
+    }`;
   }
 }
 

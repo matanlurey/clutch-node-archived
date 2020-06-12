@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { Token } from '../../lexer/token';
+import { Token } from '../lexer/token';
 import {
   BinaryOperator,
   Declaration,
   Expression,
   PrefixOperator,
   Statement,
-} from './ast';
-import { FunctionDeclaration } from './declaration/function';
-import { Parameter, ParameterList } from './declaration/parameter';
-import { TypeDefinition } from './declaration/type';
-import { VariableDeclaration } from './declaration/variable';
-import { BinaryExpression } from './expression/binary';
-import { LiteralBoolean, LiteralNumber } from './expression/literal';
-import { PrefixExpression } from './expression/prefix';
-import { StatementBlock } from './statement/block';
-import { CompilationUnit } from './unit';
+} from './ast/ast';
+import { FunctionDeclaration } from './ast/declaration/function';
+import { Parameter, ParameterList } from './ast/declaration/parameter';
+import { TypeDefinition } from './ast/declaration/type';
+import { VariableDeclaration } from './ast/declaration/variable';
+import { BinaryExpression } from './ast/expression/binary';
+import { LiteralBoolean, LiteralNumber } from './ast/expression/literal';
+import { PrefixExpression } from './ast/expression/prefix';
+import { StatementBlock } from './ast/statement/block';
+import { CompilationUnit } from './ast/unit';
 
 /**
  * Delegate class for creating new instances of @see AstNode.

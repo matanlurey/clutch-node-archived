@@ -14,6 +14,18 @@ export class Token<T extends Type = Type> {
     readonly type: T,
     readonly lexeme: string,
   ) {}
+
+  get length(): number {
+    return this.lexeme.length;
+  }
+}
+
+export const $Recovery: Recovery = {
+  kind: 'recovery',
+};
+
+export interface Recovery {
+  readonly kind: 'recovery';
 }
 
 export const $Dot: Operator = {
@@ -185,6 +197,7 @@ export const $EOF: Marker = {
  * Supported implementations of token types.
  */
 export type Type =
+  | Recovery
   | Identifier
   | Keyword
   | Literal

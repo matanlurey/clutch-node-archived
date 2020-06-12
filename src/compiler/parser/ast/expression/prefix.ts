@@ -1,6 +1,6 @@
 import { Token } from '../../../lexer/token';
+import { AstVisitor } from '../../visitor/visitor';
 import { Expression, PrefixOperator } from '../ast';
-import { AstVisitor } from '../visitor';
 
 /**
  * Represents a prefix expression.

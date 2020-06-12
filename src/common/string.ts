@@ -85,3 +85,53 @@ export function isLetter(character: number): boolean {
     (character >= Characters.$a && character <= Characters.$z)
   );
 }
+
+/**
+ * Aids incrementally writing a string, including with intendation.
+ */
+export class StringWriter {
+  private indents = '';
+
+  constructor(private buffer = '') {}
+
+  /**
+   * Adjusts the current indentation amount.
+   *
+   * @param amount
+   */
+  indent(amount = 0): StringWriter {
+    if (amount >= 0) {
+      this.indents += ' '.repeat(amount);
+    } else {
+      this.indents = this.indents.substring(-amount);
+    }
+    return this;
+  }
+
+  /**
+   * Writes a string or interpolated object to the buffer.
+   *
+   * @param object
+   */
+  write(object: unknown): StringWriter {
+    this.buffer += `${this.indents}${object}`;
+    return this;
+  }
+
+  /**
+   * Write a string or interpolated object suffixed with a new line.
+   *
+   * @param object
+   */
+  writeLine(object: unknown = ''): StringWriter {
+    this.write(`${object}\n`);
+    return this;
+  }
+
+  /**
+   * Returns the underlying buffer.
+   */
+  toString(): string {
+    return this.buffer;
+  }
+}

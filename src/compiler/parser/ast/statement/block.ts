@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { Token } from '../../../lexer/token';
+import { AstVisitor } from '../../visitor/visitor';
 import { AstNode, Statement } from '../ast';
-import { AstVisitor } from '../visitor';
 
 /**
  * Represents a statement block.

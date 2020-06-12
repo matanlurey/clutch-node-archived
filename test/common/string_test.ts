@@ -3,6 +3,7 @@ import {
   isLetter,
   isNewLine,
   isWhiteSpace,
+  StringWriter,
 } from '../../src/common/string';
 
 describe('isNewLine should', () => {
@@ -55,4 +56,52 @@ it('isLetter should recognize a-z', () => {
   for (let i = 'a'.charCodeAt(0); i <= 'z'.charCodeAt(0); i++) {
     expect(isLetter(i)).toBeTruthy();
   }
+});
+
+describe('StringWriter', () => {
+  let writer!: StringWriter;
+
+  beforeEach(() => {
+    writer = new StringWriter();
+  });
+
+  it('should write', () => {
+    writer.write('Hello World');
+    expect(writer.toString()).toBe('Hello World');
+  });
+
+  it('should write with new lines', () => {
+    writer.writeLine('Hello').writeLine('World');
+    expect(writer.toString()).toBe('Hello\nWorld\n');
+  });
+
+  it('should write with indentation', () => {
+    writer
+      .write('1.')
+      .writeLine()
+      .indent(2)
+      .write('A.')
+      .writeLine()
+      .write('B.')
+      .writeLine()
+      .indent(2)
+      .write('i.')
+      .writeLine()
+      .write('ii.')
+      .writeLine()
+      .indent(-2)
+      .write('C.')
+      .writeLine()
+      .indent(-2)
+      .write('2.');
+    expect(writer.toString()).toMatchInlineSnapshot(`
+      "1.
+        A.  
+        B.  
+          i.    
+          ii.    
+        C.  
+      2."
+    `);
+  });
 });

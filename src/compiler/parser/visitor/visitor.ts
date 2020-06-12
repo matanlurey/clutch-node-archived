@@ -1,13 +1,14 @@
-import { FunctionDeclaration } from './declaration/function';
-import { Parameter, ParameterList } from './declaration/parameter';
-import { TypeDefinition } from './declaration/type';
-import { VariableDeclaration } from './declaration/variable';
-import { BinaryExpression } from './expression/binary';
-import { Identifier } from './expression/identifier';
-import { LiteralBoolean, LiteralNumber } from './expression/literal';
-import { PrefixExpression } from './expression/prefix';
-import { StatementBlock } from './statement/block';
-import { CompilationUnit } from './unit';
+import { RecoveryNode } from '../ast/ast';
+import { FunctionDeclaration } from '../ast/declaration/function';
+import { Parameter, ParameterList } from '../ast/declaration/parameter';
+import { TypeDefinition } from '../ast/declaration/type';
+import { VariableDeclaration } from '../ast/declaration/variable';
+import { BinaryExpression } from '../ast/expression/binary';
+import { Identifier } from '../ast/expression/identifier';
+import { LiteralBoolean, LiteralNumber } from '../ast/expression/literal';
+import { PrefixExpression } from '../ast/expression/prefix';
+import { StatementBlock } from '../ast/statement/block';
+import { CompilationUnit } from '../ast/unit';
 
 export abstract class AstVisitor<R, C> {
   abstract visitBinaryExpression(astNode: BinaryExpression, context?: C): R;
@@ -30,6 +31,8 @@ export abstract class AstVisitor<R, C> {
   abstract visitParameterList(astNode: ParameterList, context?: C): R;
 
   abstract visitPrefixExpression(astNode: PrefixExpression, context?: C): R;
+
+  abstract visitRecoveryNode(astNode: RecoveryNode, context?: C): R;
 
   abstract visitStatementBlock(astNode: StatementBlock, context?: C): R;
 

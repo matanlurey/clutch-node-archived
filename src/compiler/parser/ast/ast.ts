@@ -1,5 +1,5 @@
-import { Token } from '../../lexer/token';
-import { AstVisitor } from './visitor';
+import { $Recovery, Token } from '../../lexer/token';
+import { AstVisitor } from '../visitor/visitor';
 
 export abstract class AstNode {
   /**
@@ -35,6 +35,19 @@ export abstract class SimpleNode extends AstNode {
 }
 
 /**
+ *
+ */
+export class RecoveryNode extends SimpleNode {
+  constructor(offset: number) {
+    super(new Token(offset, $Recovery, ''));
+  }
+
+  accept<R, C>(visitor: AstVisitor<R, C>, context?: C): R {
+    return visitor.visitRecoveryNode(this, context);
+  }
+}
+
+/**
  * Supported operators.
  */
 export enum OperatorType {
@@ -50,6 +63,7 @@ export enum OperatorType {
   Equality,
   Inequality,
   Assignment,
+  InvalidOrError,
 }
 
 /**

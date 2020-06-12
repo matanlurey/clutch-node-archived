@@ -1,6 +1,6 @@
 import { Token } from '../../lexer/token';
+import { AstVisitor } from '../visitor/visitor';
 import { AstNode, Declaration } from './ast';
-import { AstVisitor } from './visitor';
 
 export class CompilationUnit extends AstNode {
   constructor(

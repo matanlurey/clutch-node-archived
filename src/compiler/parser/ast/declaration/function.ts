@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { Token } from '../../../lexer/token';
+import { AstVisitor } from '../../visitor/visitor';
 import { Declaration } from '../ast';
 import { StatementBlock } from '../statement/block';
-import { AstVisitor } from '../visitor';
 import { ParameterList } from './parameter';
 import { TypeDefinition } from './type';
 
