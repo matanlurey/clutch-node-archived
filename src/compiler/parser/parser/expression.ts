@@ -103,6 +103,8 @@ export class ExpressionParser extends OperatorParser {
     | Identifier {
     return this.parseBinaryHelper(
       () => this.parsePrefixExpression(),
+      $Add,
+      $Subtract,
       $Multiply,
       $Divide,
     );
