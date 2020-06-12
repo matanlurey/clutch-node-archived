@@ -47,10 +47,7 @@ describe('should', () => {
             "error": false,
             "lexeme": "true",
             "offset": 1,
-            "type": Object {
-              "kind": "literal",
-              "name": "Boolean",
-            },
+            "type": "literal",
           },
           "value": true,
         },
@@ -59,10 +56,7 @@ describe('should', () => {
           "error": false,
           "lexeme": "!",
           "offset": 0,
-          "type": Object {
-            "kind": "operator",
-            "name": "!",
-          },
+          "type": "operator",
         },
       }
     `);
@@ -79,9 +73,7 @@ describe('should', () => {
             "error": false,
             "lexeme": "a",
             "offset": 0,
-            "type": Object {
-              "kind": "identifier",
-            },
+            "type": "identifier",
           },
         },
         "operator": 3,
@@ -90,9 +82,7 @@ describe('should', () => {
             "error": false,
             "lexeme": "b",
             "offset": 4,
-            "type": Object {
-              "kind": "identifier",
-            },
+            "type": "identifier",
           },
         },
       }

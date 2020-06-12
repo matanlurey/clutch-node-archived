@@ -5,33 +5,7 @@ import {
   isLetter,
   isWhiteSpace,
 } from '../../common/string';
-import {
-  $Arrow,
-  $Boolean,
-  $CloseCurly,
-  $CloseParen,
-  $Colon,
-  $Dot,
-  $EOF,
-  $Equals,
-  $EqualsEquals,
-  $Exclaim,
-  $ExclaimEquals,
-  $Func,
-  $Identifier,
-  $Let,
-  $Minus,
-  $Number,
-  $OpenCurly,
-  $OpenParen,
-  $Percent,
-  $Plus,
-  $Slash,
-  $Star,
-  Keyword,
-  Token,
-  Type,
-} from './token';
+import { Token, Type } from './token';
 
 function isIdentifierStart(character: number): boolean {
   return isLetter(character) || character === Characters.$UNDERSCORE;
@@ -48,12 +22,7 @@ export class Lexer {
   private position!: number;
   private program!: Scanner;
 
-  constructor(
-    private readonly keywords: { [key: string]: Keyword | undefined } = {
-      func: $Func,
-      let: $Let,
-    },
-  ) {}
+  constructor(private readonly keywords = new Set(['func', 'let'])) {}
 
   tokenize(program: Scanner): Token[] {
     this.position = 0;
@@ -65,45 +34,48 @@ export class Lexer {
         scanned.push(token);
       }
     }
-    scanned.push(this.createToken($EOF, ''));
+    scanned.push(this.createToken(Type.eof, ''));
     return scanned;
   }
 
   private scanToken(): Token | undefined {
     const character = this.program.advance();
     switch (character) {
+      // PAIRS OF CHARACTERS ======
+      // (, ), {, }, <, >
+      case Characters.$LPAREN:
+      case Characters.$RPAREN:
+      case Characters.$LCURLY:
+      case Characters.$RCURLY:
+      case Characters.$LANGLE:
+      case Characters.$RANGLE:
+        return this.createToken(Type.pair);
+      // SYMBOLS (NOT OPERATORS) ==
+      // :, .
       case Characters.$COLON:
-        return this.createToken($Colon);
-      case Characters.$LPAREN: // (
-        return this.createToken($OpenParen);
-      case Characters.$RPAREN: // )
-        return this.createToken($CloseParen);
-      case Characters.$LCURLY: // {
-        return this.createToken($OpenCurly);
-      case Characters.$RCURLY: // }
-        return this.createToken($CloseCurly);
-      case Characters.$PERIOD: // .
-        return this.createToken($Dot);
-      case Characters.$PLUS: // +
-        return this.createToken($Plus);
-      case Characters.$HYPHEN: // - or ->
-        return this.createToken(
-          this.program.match(Characters.$RANGLE) ? $Arrow : $Minus,
-        );
-      case Characters.$STAR: // *
-        return this.createToken($Star);
-      case Characters.$RSLASH: // /
-        return this.createToken($Slash);
+      case Characters.$PERIOD:
+        return this.createToken(Type.symbol);
+      // OPERATORS ================
+      // +, *, /, %
+      case Characters.$PLUS: /// +
+      case Characters.$STAR: /// *
+      case Characters.$RSLASH:
       case Characters.$PERCENT: // %
-        return this.createToken($Percent);
+        return this.createToken(Type.operator);
+      // OPERATORS or SYMBOLS =====
+      // =, ==, !=, !, -, ->
       case Characters.$EQUALS: // = or ==
-        return this.createToken(
-          this.program.match(Characters.$EQUALS) ? $EqualsEquals : $Equals,
-        );
+        this.program.match(Characters.$EQUALS);
+        return this.createToken(Type.operator);
       case Characters.$EXCLAIM: // ! or !=
-        return this.createToken(
-          this.program.match(Characters.$EQUALS) ? $ExclaimEquals : $Exclaim,
-        );
+        this.program.match(Characters.$EQUALS);
+        return this.createToken(Type.operator);
+      case Characters.$HYPHEN: // - or ->
+        if (this.program.match(Characters.$RANGLE)) {
+          return this.createToken(Type.symbol);
+        } else {
+          return this.createToken(Type.operator);
+        }
       default:
         if (isWhiteSpace(character)) {
           this.position = this.program.position;
@@ -149,12 +121,11 @@ export class Lexer {
     switch (identifierOrKeyword) {
       case 'true':
       case 'false':
-        return this.createToken($Boolean, identifierOrKeyword);
+        return this.createToken(Type.literal, identifierOrKeyword);
       default:
-        const keyword = this.keywords[identifierOrKeyword];
-        return keyword
-          ? this.createToken(keyword, identifierOrKeyword)
-          : this.createToken($Identifier, identifierOrKeyword);
+        return this.keywords.has(identifierOrKeyword)
+          ? this.createToken(Type.keyword, identifierOrKeyword)
+          : this.createToken(Type.identifier, identifierOrKeyword);
     }
   }
 
@@ -163,7 +134,7 @@ export class Lexer {
    */
   private scanDigits(): Token {
     this.scanPredicate(isDigit);
-    return this.createToken($Number);
+    return this.createToken(Type.literal);
   }
 
   /**

@@ -1,7 +1,7 @@
 import { Scanner } from '../../../src/common/scanner';
 import { SourceFile } from '../../../src/common/source';
 import { Lexer } from '../../../src/compiler/lexer/lexer';
-import { Token } from '../../../src/compiler/lexer/token';
+import { Token, Type } from '../../../src/compiler/lexer/token';
 import { OperatorType } from '../../../src/compiler/parser/ast/ast';
 import { DiagnosticReporter } from '../../../src/compiler/parser/diagnostic';
 import { OperatorParser } from '../../../src/compiler/parser/parser/operator';
@@ -18,16 +18,7 @@ function parser(program: string): OperatorParser {
 describe('should find a valid binary operator', () => {
   function parse(operator: string): OperatorType {
     return parser(operator).matchBinaryOperator(
-      new Token(
-        0,
-        {
-          kind: 'operator',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          name: operator as any,
-        },
-        operator,
-        false,
-      ),
+      new Token(0, Type.operator, operator, false),
     );
   }
 
@@ -71,16 +62,7 @@ describe('should find a valid binary operator', () => {
 describe('should find a valid prefix operator', () => {
   function parse(operator: string): OperatorType {
     return parser(operator).matchPrefixOperator(
-      new Token(
-        0,
-        {
-          kind: 'operator',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          name: operator as any,
-        },
-        operator,
-        false,
-      ),
+      new Token(0, Type.operator, operator, false),
     );
   }
 

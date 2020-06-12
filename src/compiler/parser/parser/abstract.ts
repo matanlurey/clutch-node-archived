@@ -57,7 +57,7 @@ export abstract class AbstractParser {
     if (!token) {
       return false;
     }
-    if (token.type.kind === 'marker' && token.type.name === 'EOF') {
+    if (token.type === Type.eof) {
       return false;
     } else {
       return true;
@@ -98,8 +98,16 @@ export abstract class AbstractParser {
   /**
    * Returns whether the next token is of type @param type.
    */
-  protected check(type: Type): boolean {
-    return this.hasNext ? this.peek().type === type : false;
+  protected check(type: Type | [Type, string]): boolean {
+    if (!this.hasNext) {
+      return false;
+    }
+    const peek = this.peek();
+    if (Array.isArray(type)) {
+      return peek.type === type[0] && peek.lexeme === type[1];
+    } else {
+      return peek.type === type;
+    }
   }
 
   /**
@@ -109,7 +117,7 @@ export abstract class AbstractParser {
    *
    * @param expect
    */
-  protected match(...expect: Type[]): boolean {
+  protected match(...expect: (Type | [Type, string])[]): boolean {
     return expect.some((e) => {
       if (this.check(e)) {
         this.position++;

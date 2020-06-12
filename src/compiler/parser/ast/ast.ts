@@ -1,4 +1,4 @@
-import { $Recovery, Token } from '../../lexer/token';
+import { Token, Type } from '../../lexer/token';
 import { AstVisitor } from '../visitor/visitor';
 
 export abstract class AstNode {
@@ -39,7 +39,7 @@ export abstract class SimpleNode extends AstNode {
  */
 export class RecoveryNode extends SimpleNode {
   constructor(offset: number) {
-    super(new Token(offset, $Recovery, ''));
+    super(new Token(offset, Type.recover, ''));
   }
 
   accept<R, C>(visitor: AstVisitor<R, C>, context?: C): R {

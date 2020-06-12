@@ -1,4 +1,4 @@
-import { Token } from '../../lexer/token';
+import { Token, Type } from '../../lexer/token';
 import { OperatorType } from '../ast/ast';
 import { DiagnosticCode } from '../diagnostic';
 import { AbstractParser } from './abstract';
@@ -16,10 +16,10 @@ export class OperatorParser extends AbstractParser {
   }
 
   public matchBinaryOperator(token: Token): OperatorType {
-    if (token.type.kind !== 'operator') {
+    if (token.type !== Type.operator) {
       return this.invalidOperator(token);
     }
-    switch (token.type.name) {
+    switch (token.lexeme) {
       case '+':
         return OperatorType.Addition;
       case '-':
@@ -42,10 +42,10 @@ export class OperatorParser extends AbstractParser {
   }
 
   public matchPrefixOperator(token: Token): OperatorType {
-    if (token.type.kind !== 'operator') {
+    if (token.type !== Type.operator) {
       return this.invalidOperator(token);
     }
-    switch (token.type.name) {
+    switch (token.lexeme) {
       case '!':
         return OperatorType.Negation;
       case '-':

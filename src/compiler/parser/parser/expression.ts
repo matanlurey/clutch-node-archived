@@ -1,18 +1,4 @@
-import {
-  $Boolean,
-  $Equals,
-  $EqualsEquals,
-  $Exclaim,
-  $ExclaimEquals,
-  $Identifier,
-  $Minus,
-  $Number,
-  $Plus,
-  $Slash,
-  $Star,
-  Token,
-  Type,
-} from '../../lexer/token';
+import { Token, Type } from '../../lexer/token';
 import { BinaryOperator, Expression, PrefixOperator } from '../ast/ast';
 import { BinaryExpression } from '../ast/expression/binary';
 import { Identifier } from '../ast/expression/identifier';
@@ -30,7 +16,7 @@ export class ExpressionParser extends OperatorParser {
    * Parses an identifier, or reports an error and returns a synthetic identifier.
    */
   protected parseIdentifier(): Identifier {
-    if (this.match($Identifier)) {
+    if (this.match(Type.identifier)) {
       return this.factory.createIdentifier(this.previous());
     }
     return this.fatalExpectedIdentifier(this.advance());
@@ -41,7 +27,10 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | LiteralExpression
     | Identifier {
-    return this.parseBinaryHelper(() => this.parseConditional(), $Equals);
+    return this.parseBinaryHelper(() => this.parseConditional(), [
+      Type.operator,
+      '=',
+    ]);
   }
 
   private parseConditional():
@@ -75,8 +64,8 @@ export class ExpressionParser extends OperatorParser {
     | Identifier {
     return this.parseBinaryHelper(
       () => this.parseComparison(),
-      $EqualsEquals,
-      $ExclaimEquals,
+      [Type.operator, '=='],
+      [Type.operator, '!='],
     );
   }
 
@@ -103,16 +92,16 @@ export class ExpressionParser extends OperatorParser {
     | Identifier {
     return this.parseBinaryHelper(
       () => this.parsePrefixExpression(),
-      $Plus,
-      $Minus,
-      $Star,
-      $Slash,
+      [Type.operator, '*'],
+      [Type.operator, '/'],
+      [Type.operator, '+'],
+      [Type.operator, '-'],
     );
   }
 
   private parseBinaryHelper<E extends Expression>(
     parseNext: () => E,
-    ...kinds: Type[]
+    ...kinds: [Type, string][]
   ): E {
     let expression = parseNext();
     while (this.match(...kinds)) {
@@ -132,15 +121,15 @@ export class ExpressionParser extends OperatorParser {
     | Identifier {
     return this.parsePrefixHelper(
       () => this.parsePostfixExpression(),
-      $Minus,
-      $Plus,
-      $Exclaim,
+      [Type.operator, '-'],
+      [Type.operator, '+'],
+      [Type.operator, '!'],
     );
   }
 
   private parsePrefixHelper<E extends Expression>(
     parseNext: () => E,
-    ...kinds: Type[]
+    ...kinds: (Type | [Type, string])[]
   ): E {
     if (this.match(...kinds)) {
       const token = this.previous();
@@ -174,17 +163,18 @@ export class ExpressionParser extends OperatorParser {
   }
 
   private parseLiteral(): LiteralExpression | Identifier {
-    if (this.match($Number)) {
+    if (this.match(Type.literal)) {
       const token = this.previous();
-      const value = Number(token.lexeme);
-      return this.factory.createLiteralNumber(token, value);
+      if (token.lexeme === 'true') {
+        return this.factory.createLiteralBoolean(token, true);
+      } else if (token.lexeme === 'false') {
+        return this.factory.createLiteralBoolean(token, false);
+      } else {
+        return this.factory.createLiteralNumber(token, Number(token.lexeme));
+      }
+    } else {
+      return this.parseIdentifier();
     }
-    if (this.match($Boolean)) {
-      const token = this.previous();
-      const value = token.lexeme === 'true';
-      return this.factory.createLiteralBoolean(token, value);
-    }
-    return this.parseIdentifier();
   }
 
   private fatalExpectedIdentifier(token: Token): Identifier {
