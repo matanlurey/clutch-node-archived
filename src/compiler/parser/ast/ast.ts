@@ -51,7 +51,6 @@ export class RecoveryNode extends SimpleNode {
  * Supported operators.
  */
 export enum OperatorType {
-  Accessor,
   UnaryNegative,
   UnaryPositive,
   Negation,
@@ -70,7 +69,6 @@ export enum OperatorType {
  * Valid binary operator types.
  */
 export type BinaryOperator =
-  | OperatorType.Accessor
   | OperatorType.Addition
   | OperatorType.Subtraction
   | OperatorType.Multiplication

@@ -12,6 +12,7 @@ import { Parameter, ParameterList } from './ast/declaration/parameter';
 import { TypeDefinition } from './ast/declaration/type';
 import { VariableDeclaration } from './ast/declaration/variable';
 import { BinaryExpression } from './ast/expression/binary';
+import { Identifier } from './ast/expression/identifier';
 import { LiteralBoolean, LiteralNumber } from './ast/expression/literal';
 import { PrefixExpression } from './ast/expression/prefix';
 import { StatementBlock } from './ast/statement/block';
@@ -61,6 +62,10 @@ export class AstFactory {
       returnType,
       statements,
     );
+  }
+
+  createIdentifier(identifier: Token): Identifier {
+    return new Identifier(identifier);
   }
 
   /**

@@ -23,9 +23,6 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     astNode.left.accept(this, context);
     let operator;
     switch (astNode.operator) {
-      case OperatorType.Accessor:
-        operator = '.';
-        break;
       case OperatorType.Addition:
         operator = '+';
         break;
@@ -164,7 +161,7 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     astNode: RecoveryNode,
     context = new StringWriter(),
   ): StringWriter {
-    return context.write(`!ERROR!`);
+    return context.write(`ಠ_ಠ`);
   }
 
   visitStatementBlock(

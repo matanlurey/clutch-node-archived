@@ -30,8 +30,6 @@ export class OperatorParser extends AbstractParser {
         return OperatorType.Division;
       case '%':
         return OperatorType.Remainder;
-      case '.':
-        return OperatorType.Accessor;
       case '=':
         return OperatorType.Assignment;
       case '==':

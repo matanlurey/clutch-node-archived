@@ -13,10 +13,15 @@ export class Token<T extends Type = Type> {
     readonly offset: number,
     readonly type: T,
     readonly lexeme: string,
+    readonly error = false,
   ) {}
 
   get length(): number {
     return this.lexeme.length;
+  }
+
+  asError(lexme = 'ಠ_ಠ'): Token {
+    return new Token(this.offset, this.type, lexme, true);
   }
 }
 

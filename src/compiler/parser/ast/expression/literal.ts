@@ -6,7 +6,7 @@ import { Expression } from '../ast';
  * Represents a literal (constant) expression.
  */
 export abstract class LiteralExpression<
-  V extends boolean | number | string
+  V extends boolean | number | string = boolean | number | string
 > extends Expression {
   constructor(protected readonly literal: Token) {
     super();

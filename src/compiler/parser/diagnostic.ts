@@ -117,6 +117,11 @@ export class DiagnosticCode {
     DiagnosticCategory.error,
   );
 
+  static readonly SYNTAX_EXPECTED_IDENTIFIER = new DiagnosticCode(
+    'SYNTAX_EXPECTED_IDENTIFIER',
+    DiagnosticCategory.error,
+  );
+
   static readonly SYNTAX_INVALID_OPERATOR = new DiagnosticCode(
     'SYNTAX_INVALID_OPERATOR',
     DiagnosticCategory.error,
