@@ -6,28 +6,28 @@ import {
   isWhiteSpace,
 } from '../../common/string';
 import {
-  $Add,
   $Arrow,
-  $Assign,
   $Boolean,
   $CloseCurly,
   $CloseParen,
   $Colon,
-  $Divide,
   $Dot,
   $EOF,
   $Equals,
+  $EqualsEquals,
+  $Exclaim,
+  $ExclaimEquals,
   $Func,
   $Identifier,
   $Let,
-  $Modulus,
-  $Multiply,
-  $Not,
-  $NotEquals,
+  $Minus,
   $Number,
   $OpenCurly,
   $OpenParen,
-  $Subtract,
+  $Percent,
+  $Plus,
+  $Slash,
+  $Star,
   Keyword,
   Token,
   Type,
@@ -85,24 +85,24 @@ export class Lexer {
       case Characters.$PERIOD: // .
         return this.createToken($Dot);
       case Characters.$PLUS: // +
-        return this.createToken($Add);
+        return this.createToken($Plus);
       case Characters.$HYPHEN: // - or ->
         return this.createToken(
-          this.program.match(Characters.$RANGLE) ? $Arrow : $Subtract,
+          this.program.match(Characters.$RANGLE) ? $Arrow : $Minus,
         );
       case Characters.$STAR: // *
-        return this.createToken($Multiply);
+        return this.createToken($Star);
       case Characters.$RSLASH: // /
-        return this.createToken($Divide);
+        return this.createToken($Slash);
       case Characters.$PERCENT: // %
-        return this.createToken($Modulus);
+        return this.createToken($Percent);
       case Characters.$EQUALS: // = or ==
         return this.createToken(
-          this.program.match(Characters.$EQUALS) ? $Equals : $Assign,
+          this.program.match(Characters.$EQUALS) ? $EqualsEquals : $Equals,
         );
       case Characters.$EXCLAIM: // ! or !=
         return this.createToken(
-          this.program.match(Characters.$EQUALS) ? $NotEquals : $Not,
+          this.program.match(Characters.$EQUALS) ? $ExclaimEquals : $Exclaim,
         );
       default:
         if (isWhiteSpace(character)) {

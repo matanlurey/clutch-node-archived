@@ -33,52 +33,47 @@ export interface Recovery {
   readonly kind: 'recovery';
 }
 
-export const $Dot: Operator = {
-  kind: 'operator',
-  name: '.',
-};
-
-export const $Not: Operator = {
+export const $Exclaim: Operator = {
   kind: 'operator',
   name: '!',
 };
 
-export const $Add: Operator = {
+export const $Plus: Operator = {
   kind: 'operator',
   name: '+',
 };
 
-export const $Subtract: Operator = {
+export const $Minus: Operator = {
   kind: 'operator',
   name: '-',
 };
 
-export const $Multiply: Operator = {
+export const $Star: Operator = {
   kind: 'operator',
   name: '*',
 };
 
-export const $Divide: Operator = {
+export const $Slash: Operator = {
   kind: 'operator',
   name: '/',
 };
 
-export const $Modulus: Operator = {
+export const $Percent: Operator = {
   kind: 'operator',
   name: '%',
 };
 
-export const $Assign: Operator = {
+export const $Equals: Operator = {
   kind: 'operator',
   name: '=',
 };
 
-export const $Equals: Operator = {
+export const $EqualsEquals: Operator = {
   kind: 'operator',
   name: '==',
 };
 
-export const $NotEquals: Operator = {
+export const $ExclaimEquals: Operator = {
   kind: 'operator',
   name: '!=',
 };
@@ -130,6 +125,10 @@ export const $CloseAngle: Pair = {
 export interface Symbol {
   readonly kind: 'symbol';
 }
+
+export const $Dot: Symbol = {
+  kind: 'symbol',
+};
 
 export const $Arrow: Symbol = {
   kind: 'symbol',

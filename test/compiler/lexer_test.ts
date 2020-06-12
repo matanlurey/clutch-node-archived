@@ -1,25 +1,25 @@
 import { Scanner } from '../../src/common/scanner';
 import { Lexer } from '../../src/compiler/lexer/lexer';
 import {
-  $Add,
-  $Assign,
   $Boolean,
   $CloseCurly,
   $CloseParen,
-  $Divide,
   $Dot,
   $EOF,
+  $Equals,
+  $Exclaim,
+  $ExclaimEquals,
   $Func,
   $Identifier,
   $Let,
-  $Modulus,
-  $Multiply,
-  $Not,
-  $NotEquals,
+  $Minus,
   $Number,
   $OpenCurly,
   $OpenParen,
-  $Subtract as $Minus,
+  $Percent,
+  $Plus,
+  $Slash,
+  $Star,
   Type,
 } from '../../src/compiler/lexer/token';
 
@@ -128,7 +128,7 @@ describe('should scan', () => {
 
   it('+', () => {
     expect(tokenize('+')).toEqual<Tokenish[]>([
-      { offset: 0, type: $Add, lexeme: '+' },
+      { offset: 0, type: $Plus, lexeme: '+' },
       { offset: 1, type: $EOF, lexeme: '' },
     ]);
   });
@@ -142,42 +142,42 @@ describe('should scan', () => {
 
   it('*', () => {
     expect(tokenize('*')).toEqual<Tokenish[]>([
-      { offset: 0, type: $Multiply, lexeme: '*' },
+      { offset: 0, type: $Star, lexeme: '*' },
       { offset: 1, type: $EOF, lexeme: '' },
     ]);
   });
 
   it('/', () => {
     expect(tokenize('/')).toEqual<Tokenish[]>([
-      { offset: 0, type: $Divide, lexeme: '/' },
+      { offset: 0, type: $Slash, lexeme: '/' },
       { offset: 1, type: $EOF, lexeme: '' },
     ]);
   });
 
   it('%', () => {
     expect(tokenize('%')).toEqual<Tokenish[]>([
-      { offset: 0, type: $Modulus, lexeme: '%' },
+      { offset: 0, type: $Percent, lexeme: '%' },
       { offset: 1, type: $EOF, lexeme: '' },
     ]);
   });
 
   it('=', () => {
     expect(tokenize('=')).toEqual<Tokenish[]>([
-      { offset: 0, type: $Assign, lexeme: '=' },
+      { offset: 0, type: $Equals, lexeme: '=' },
       { offset: 1, type: $EOF, lexeme: '' },
     ]);
   });
 
   it('!', () => {
     expect(tokenize('!')).toEqual<Tokenish[]>([
-      { offset: 0, type: $Not, lexeme: '!' },
+      { offset: 0, type: $Exclaim, lexeme: '!' },
       { offset: 1, type: $EOF, lexeme: '' },
     ]);
   });
 
   it('!=', () => {
     expect(tokenize('!=')).toEqual<Tokenish[]>([
-      { offset: 0, type: $NotEquals, lexeme: '!=' },
+      { offset: 0, type: $ExclaimEquals, lexeme: '!=' },
       { offset: 2, type: $EOF, lexeme: '' },
     ]);
   });

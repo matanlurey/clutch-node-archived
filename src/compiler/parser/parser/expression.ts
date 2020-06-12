@@ -1,15 +1,15 @@
 import {
-  $Add,
-  $Assign,
   $Boolean,
-  $Divide,
   $Equals,
+  $EqualsEquals,
+  $Exclaim,
+  $ExclaimEquals,
   $Identifier,
-  $Multiply,
-  $Not,
-  $NotEquals,
+  $Minus,
   $Number,
-  $Subtract,
+  $Plus,
+  $Slash,
+  $Star,
   Token,
   Type,
 } from '../../lexer/token';
@@ -41,7 +41,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | LiteralExpression
     | Identifier {
-    return this.parseBinaryHelper(() => this.parseConditional(), $Assign);
+    return this.parseBinaryHelper(() => this.parseConditional(), $Equals);
   }
 
   private parseConditional():
@@ -75,8 +75,8 @@ export class ExpressionParser extends OperatorParser {
     | Identifier {
     return this.parseBinaryHelper(
       () => this.parseComparison(),
-      $Equals,
-      $NotEquals,
+      $EqualsEquals,
+      $ExclaimEquals,
     );
   }
 
@@ -103,10 +103,10 @@ export class ExpressionParser extends OperatorParser {
     | Identifier {
     return this.parseBinaryHelper(
       () => this.parsePrefixExpression(),
-      $Add,
-      $Subtract,
-      $Multiply,
-      $Divide,
+      $Plus,
+      $Minus,
+      $Star,
+      $Slash,
     );
   }
 
@@ -132,9 +132,9 @@ export class ExpressionParser extends OperatorParser {
     | Identifier {
     return this.parsePrefixHelper(
       () => this.parsePostfixExpression(),
-      $Subtract,
-      $Add,
-      $Not,
+      $Minus,
+      $Plus,
+      $Exclaim,
     );
   }
 
