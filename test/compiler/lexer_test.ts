@@ -9,7 +9,9 @@ import {
   $Divide,
   $Dot,
   $EOF,
+  $Func,
   $Identifier,
+  $Let,
   $Modulus,
   $Multiply,
   $Not,
@@ -19,7 +21,7 @@ import {
   $OpenParen,
   $Subtract as $Minus,
   Type,
-} from '../../src/compiler/lexer/tokens';
+} from '../../src/compiler/lexer/token';
 
 let lexer!: Lexer;
 
@@ -200,6 +202,53 @@ describe('should scan identifier', () => {
     expect(tokenize('a2')).toEqual<Tokenish[]>([
       { offset: 0, type: $Identifier, lexeme: 'a2' },
       { offset: 2, type: $EOF, lexeme: '' },
+    ]);
+  });
+});
+
+describe('should scan keywords', () => {
+  it('let', () => {
+    expect(tokenize('let')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Let, lexeme: 'let' },
+      { offset: 3, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('func', () => {
+    expect(tokenize('func')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Func, lexeme: 'func' },
+      { offset: 4, type: $EOF, lexeme: '' },
+    ]);
+  });
+});
+
+describe('should scan', () => {
+  function tokens(input: string): string[] {
+    return tokenize(input).map((t) => `${t.type.kind}: ${t.lexeme}`);
+  }
+
+  it('function declaration', () => {
+    expect(tokens('func main() -> {}')).toEqual([
+      'keyword: func',
+      'identifier: main',
+      'pair: (',
+      'pair: )',
+      'symbol: ->',
+      'pair: {',
+      'pair: }',
+      'marker: ',
+    ]);
+  });
+
+  it('variable declaration', () => {
+    expect(tokens('let a: B = c')).toEqual([
+      'keyword: let',
+      'identifier: a',
+      'symbol: :',
+      'identifier: B',
+      'operator: =',
+      'identifier: c',
+      'marker: ',
     ]);
   });
 });

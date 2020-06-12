@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /**
  * Represents a scanned token during the lexing phase.
  */
-export class Token {
+export class Token<T extends Type = Type> {
   /**
    * Creates a new scanned token.
    * @param offset Offset the token starts at.
@@ -10,7 +11,7 @@ export class Token {
    */
   constructor(
     readonly offset: number,
-    readonly type: Type,
+    readonly type: T,
     readonly lexeme: string,
   ) {}
 }
@@ -109,6 +110,20 @@ export const $CloseAngle: Pair = {
 
 // -----------------------------------------------------------------------------
 
+export interface Symbol {
+  readonly kind: 'symbol';
+}
+
+export const $Arrow: Symbol = {
+  kind: 'symbol',
+};
+
+export const $Colon: Symbol = {
+  kind: 'symbol',
+};
+
+// -----------------------------------------------------------------------------
+
 export interface Identifier {
   readonly kind: 'identifier';
 }
@@ -117,11 +132,26 @@ export const $Identifier: Identifier = {
   kind: 'identifier',
 };
 
+export interface Keyword {
+  readonly kind: 'keyword';
+  readonly name: string;
+}
+
+export const $Func: Keyword = {
+  kind: 'keyword',
+  name: 'func',
+};
+
+export const $Let: Keyword = {
+  kind: 'keyword',
+  name: 'let',
+};
+
 // -----------------------------------------------------------------------------
 
-export interface Literal {
+export interface Literal<T = 'Boolean' | 'String' | 'Number'> {
   readonly kind: 'literal';
-  readonly name: 'Boolean' | 'String' | 'Number';
+  readonly name: T;
 }
 
 export const $Boolean: Literal = {
@@ -154,4 +184,11 @@ export const $EOF: Marker = {
 /**
  * Supported implementations of token types.
  */
-export type Type = Identifier | Literal | Marker | Operator | Pair;
+export type Type =
+  | Identifier
+  | Keyword
+  | Literal
+  | Marker
+  | Operator
+  | Pair
+  | Symbol;

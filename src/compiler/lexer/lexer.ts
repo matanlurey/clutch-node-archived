@@ -7,14 +7,19 @@ import {
 } from '../../common/string';
 import {
   $Add,
+  $Arrow,
   $Assign,
   $Boolean,
   $CloseCurly,
   $CloseParen,
+  $Colon,
   $Divide,
   $Dot,
   $EOF,
+  $Equals,
+  $Func,
   $Identifier,
+  $Let,
   $Modulus,
   $Multiply,
   $Not,
@@ -23,9 +28,10 @@ import {
   $OpenCurly,
   $OpenParen,
   $Subtract,
+  Keyword,
   Token,
   Type,
-} from './tokens';
+} from './token';
 
 function isIdentifierStart(character: number): boolean {
   return isLetter(character) || character === Characters.$UNDERSCORE;
@@ -41,6 +47,13 @@ function isIdentifier(character: number): boolean {
 export class Lexer {
   private position!: number;
   private program!: Scanner;
+
+  constructor(
+    private readonly keywords: { [key: string]: Keyword | undefined } = {
+      func: $Func,
+      let: $Let,
+    },
+  ) {}
 
   tokenize(program: Scanner): Token[] {
     this.position = 0;
@@ -59,6 +72,8 @@ export class Lexer {
   private scanToken(): Token | undefined {
     const character = this.program.advance();
     switch (character) {
+      case Characters.$COLON:
+        return this.createToken($Colon);
       case Characters.$LPAREN: // (
         return this.createToken($OpenParen);
       case Characters.$RPAREN: // )
@@ -71,16 +86,20 @@ export class Lexer {
         return this.createToken($Dot);
       case Characters.$PLUS: // +
         return this.createToken($Add);
-      case Characters.$HYPHEN: // -
-        return this.createToken($Subtract);
+      case Characters.$HYPHEN: // - or ->
+        return this.createToken(
+          this.program.match(Characters.$RANGLE) ? $Arrow : $Subtract,
+        );
       case Characters.$STAR: // *
         return this.createToken($Multiply);
       case Characters.$RSLASH: // /
         return this.createToken($Divide);
       case Characters.$PERCENT: // %
         return this.createToken($Modulus);
-      case Characters.$EQUALS: // =
-        return this.createToken($Assign);
+      case Characters.$EQUALS: // = or ==
+        return this.createToken(
+          this.program.match(Characters.$EQUALS) ? $Equals : $Assign,
+        );
       case Characters.$EXCLAIM: // ! or !=
         return this.createToken(
           this.program.match(Characters.$EQUALS) ? $NotEquals : $Not,
@@ -132,7 +151,10 @@ export class Lexer {
       case 'false':
         return this.createToken($Boolean, identifierOrKeyword);
       default:
-        return this.createToken($Identifier, identifierOrKeyword);
+        const keyword = this.keywords[identifierOrKeyword];
+        return keyword
+          ? this.createToken(keyword, identifierOrKeyword)
+          : this.createToken($Identifier, identifierOrKeyword);
     }
   }
 

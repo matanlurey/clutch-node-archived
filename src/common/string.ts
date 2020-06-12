@@ -27,6 +27,7 @@ export const enum Characters {
   $PLUS = 43,
   $HYPHEN = 45,
   $PERIOD = 46,
+  $COLON = 58,
   $RSLASH = 47,
   $EQUALS = 61,
   $LPAREN = 40,

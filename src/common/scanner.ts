@@ -10,9 +10,9 @@ export class Scanner {
   // Current position in the scanner.
   private mPosition = 0;
 
-  constructor(input: string | SourceFile) {
+  constructor(input: string | SourceFile, url?: string) {
     if (typeof input === 'string') {
-      this.input = new SourceFile(input);
+      this.input = new SourceFile(input, url);
     } else {
       this.input = input;
     }
