@@ -14,6 +14,7 @@ import {
   $Divide,
   $Dot,
   $EOF,
+  $Identifier,
   $Modulus,
   $Multiply,
   $Not,
@@ -131,7 +132,7 @@ export class Lexer {
       case 'false':
         return this.createToken($Boolean, identifierOrKeyword);
       default:
-        return this.error();
+        return this.createToken($Identifier, identifierOrKeyword);
     }
   }
 

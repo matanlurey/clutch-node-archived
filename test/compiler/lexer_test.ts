@@ -9,6 +9,7 @@ import {
   $Divide,
   $Dot,
   $EOF,
+  $Identifier,
   $Modulus,
   $Multiply,
   $Not,
@@ -175,6 +176,29 @@ describe('should scan', () => {
   it('!=', () => {
     expect(tokenize('!=')).toEqual<Tokenish[]>([
       { offset: 0, type: $NotEquals, lexeme: '!=' },
+      { offset: 2, type: $EOF, lexeme: '' },
+    ]);
+  });
+});
+
+describe('should scan identifier', () => {
+  it('[simple]', () => {
+    expect(tokenize('a')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Identifier, lexeme: 'a' },
+      { offset: 1, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('with an undescore', () => {
+    expect(tokenize('a_b')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Identifier, lexeme: 'a_b' },
+      { offset: 3, type: $EOF, lexeme: '' },
+    ]);
+  });
+
+  it('with a number', () => {
+    expect(tokenize('a2')).toEqual<Tokenish[]>([
+      { offset: 0, type: $Identifier, lexeme: 'a2' },
       { offset: 2, type: $EOF, lexeme: '' },
     ]);
   });

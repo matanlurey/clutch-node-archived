@@ -61,7 +61,7 @@ export class Scanner {
    *
    * @param pattern
    */
-  match(pattern: string | number | ((char: number) => boolean)): boolean {
+  match(pattern: number | string | ((char: number) => boolean)): boolean {
     if (typeof pattern === 'string') {
       if (this.contents.startsWith(pattern, this.mPosition)) {
         this.mPosition += pattern.length;

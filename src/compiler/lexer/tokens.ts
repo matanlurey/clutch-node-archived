@@ -109,6 +109,16 @@ export const $CloseAngle: Pair = {
 
 // -----------------------------------------------------------------------------
 
+export interface Identifier {
+  readonly kind: 'identifier';
+}
+
+export const $Identifier: Identifier = {
+  kind: 'identifier',
+};
+
+// -----------------------------------------------------------------------------
+
 export interface Literal {
   readonly kind: 'literal';
   readonly name: 'Boolean' | 'String' | 'Number';
@@ -144,4 +154,4 @@ export const $EOF: Marker = {
 /**
  * Supported implementations of token types.
  */
-export type Type = Literal | Marker | Operator | Pair;
+export type Type = Identifier | Literal | Marker | Operator | Pair;
