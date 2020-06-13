@@ -5,8 +5,12 @@ import { Parameter, ParameterList } from '../ast/declaration/parameter';
 import { TypeDefinition } from '../ast/declaration/type';
 import { VariableDeclaration } from '../ast/declaration/variable';
 import { BinaryExpression } from '../ast/expression/binary';
+import { CallExpression } from '../ast/expression/call';
+import { ConditionalExpression } from '../ast/expression/conditional';
+import { GroupExpression } from '../ast/expression/group';
 import { Identifier } from '../ast/expression/identifier';
 import { LiteralBoolean, LiteralNumber } from '../ast/expression/literal';
+import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
 import { StatementBlock } from '../ast/statement/block';
 import { CompilationUnit } from '../ast/unit';
@@ -47,11 +51,51 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
       case OperatorType.Subtraction:
         operator = '-';
         break;
+      case OperatorType.And:
+        operator = '&&';
+        break;
+      case OperatorType.Or:
+        operator = '||';
+        break;
+      case OperatorType.GreaterThan:
+        operator = '>';
+        break;
+      case OperatorType.GreaterThanOrEquals:
+        operator = '>=';
+        break;
+      case OperatorType.LessThan:
+        operator = '<';
+        break;
+      case OperatorType.LessThanOrEquals:
+        operator = '<=';
+        break;
+      case OperatorType.BitwiseShiftLeft:
+        operator = '<<';
+        break;
+      case OperatorType.BitwiseShiftRight:
+        operator = '>>';
+        break;
       default:
-        operator = '';
+        operator = 'ಠ_ಠ';
     }
     context.write(` ${operator} `);
     return astNode.right.accept(this, context);
+  }
+
+  visitCallExpression(
+    astNode: CallExpression,
+    context = new StringWriter(),
+  ): StringWriter {
+    astNode.receiver.accept(this, context);
+    context.write('(');
+    astNode.argumentList.forEach((arg, index) => {
+      const last = index === astNode.argumentList.length - 1;
+      arg.accept(this, context);
+      if (!last) {
+        context.write(', ');
+      }
+    });
+    return context.write(')');
   }
 
   visitCompilationUnit(
@@ -63,6 +107,18 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
       context.writeLine();
     });
     return context;
+  }
+
+  visitConditionalExpression(
+    astNode: ConditionalExpression,
+    context = new StringWriter(),
+  ): StringWriter {
+    context.write('if ');
+    astNode.condition.accept(this, context);
+    context.write(' then ');
+    astNode.thenExpression.accept(this, context);
+    context.write(' else ');
+    return astNode.elseExpression.accept(this, context);
   }
 
   visitFunctionDeclaration(
@@ -82,6 +138,15 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
       astNode.statements.accept(this, context);
     }
     return context;
+  }
+
+  visitGroupExpression(
+    astNode: GroupExpression,
+    context = new StringWriter(),
+  ): StringWriter {
+    context.write('(');
+    astNode.expression.accept(this, context);
+    return context.write(')');
   }
 
   visitIdentifier(
@@ -150,11 +215,36 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
       case OperatorType.UnaryPositive:
         operator = '+';
         break;
+      case OperatorType.PreDecrement:
+        operator = '--';
+        break;
+      case OperatorType.PreIncrement:
+        operator = '++';
+        break;
       default:
         operator = '';
     }
     context.write(operator);
     return astNode.expression.accept(this, context);
+  }
+
+  visitPostfixExpression(
+    astNode: PostfixExpression,
+    context = new StringWriter(),
+  ): StringWriter {
+    let operator;
+    switch (astNode.operator) {
+      case OperatorType.PostDecrement:
+        operator = '--';
+        break;
+      case OperatorType.PostIncrement:
+        operator = '++';
+        break;
+      default:
+        operator = '';
+    }
+    astNode.expression.accept(this, context);
+    return context.write(operator);
   }
 
   visitRecoveryNode(

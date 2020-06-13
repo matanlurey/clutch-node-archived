@@ -1,8 +1,17 @@
 import { Token, Type } from '../../lexer/token';
-import { BinaryOperator, Expression, PrefixOperator } from '../ast/ast';
+import {
+  BinaryOperator,
+  Expression,
+  PostfixOperator,
+  PrefixOperator,
+} from '../ast/ast';
 import { BinaryExpression } from '../ast/expression/binary';
+import { CallExpression } from '../ast/expression/call';
+import { ConditionalExpression } from '../ast/expression/conditional';
+import { GroupExpression } from '../ast/expression/group';
 import { Identifier } from '../ast/expression/identifier';
 import { LiteralExpression } from '../ast/expression/literal';
+import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
 import { DiagnosticCode } from '../diagnostic';
 import { OperatorParser } from './operator';
@@ -23,43 +32,97 @@ export class ExpressionParser extends OperatorParser {
   }
 
   private parseAssignment():
+    | ConditionalExpression
     | BinaryExpression
     | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
-    return this.parseBinaryHelper(() => this.parseConditional(), [
-      Type.operator,
-      '=',
-    ]);
+    return this.parseBinaryHelper(
+      () => this.parseConditional(),
+      [Type.operator, '='],
+      [Type.operator, '+='],
+      [Type.operator, '-='],
+      [Type.operator, '*='],
+      [Type.operator, '/='],
+      [Type.operator, '%='],
+    );
   }
 
   private parseConditional():
+    | ConditionalExpression
     | BinaryExpression
     | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
+    if (this.match([Type.keyword, 'if'])) {
+      const ifToken = this.previous();
+      const condition = this.parseExpression();
+      const thenToken = this.advance();
+      if (thenToken.lexeme !== 'then') {
+        this.reporter.reportToken(
+          thenToken,
+          DiagnosticCode.SYNTAX_EXPECTED_THEN,
+        );
+      }
+      const thenExpr = this.parseExpression();
+      const elseToken = this.advance();
+      if (elseToken.lexeme !== 'else') {
+        this.reporter.reportToken(
+          elseToken,
+          DiagnosticCode.SYNTAX_EXPECTED_ELSE,
+        );
+      }
+      const elseExpr = this.parseExpression();
+      return this.factory.createConditionalExpression(
+        ifToken,
+        condition,
+        thenExpr,
+        elseExpr,
+      );
+    }
     return this.parseLogicalOr();
   }
 
   private parseLogicalOr():
     | BinaryExpression
     | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
-    return this.parseLogicalAnd();
+    return this.parseBinaryHelper(() => this.parseLogicalAnd(), [
+      Type.operator,
+      '||',
+    ]);
   }
 
   private parseLogicalAnd():
     | BinaryExpression
     | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
-    return this.parseEquality();
+    return this.parseBinaryHelper(() => this.parseEquality(), [
+      Type.operator,
+      '&&',
+    ]);
   }
 
   private parseEquality():
     | BinaryExpression
     | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
     return this.parseBinaryHelper(
@@ -72,22 +135,41 @@ export class ExpressionParser extends OperatorParser {
   private parseComparison():
     | BinaryExpression
     | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
-    return this.parseBitwiseShift();
+    return this.parseBinaryHelper(
+      () => this.parseBitwiseShift(),
+      [Type.operator, '<'],
+      [Type.operator, '>'],
+      [Type.operator, '<='],
+      [Type.operator, '>='],
+    );
   }
 
   private parseBitwiseShift():
     | BinaryExpression
     | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
-    return this.parseAdditive();
+    return this.parseBinaryHelper(
+      () => this.parseAdditive(),
+      [Type.operator, '<<'],
+      [Type.operator, '>>'],
+    );
   }
 
   private parseAdditive():
     | BinaryExpression
     | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
     return this.parseBinaryHelper(
@@ -101,7 +183,7 @@ export class ExpressionParser extends OperatorParser {
 
   private parseBinaryHelper<E extends Expression>(
     parseNext: () => E,
-    ...kinds: [Type, string][]
+    ...kinds: (Type | [Type, string])[]
   ): E {
     let expression = parseNext();
     while (this.match(...kinds)) {
@@ -117,6 +199,9 @@ export class ExpressionParser extends OperatorParser {
 
   private parsePrefixExpression():
     | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
     return this.parsePrefixHelper(
@@ -124,6 +209,8 @@ export class ExpressionParser extends OperatorParser {
       [Type.operator, '-'],
       [Type.operator, '+'],
       [Type.operator, '!'],
+      [Type.operator, '--'],
+      [Type.operator, '++'],
     );
   }
 
@@ -144,21 +231,114 @@ export class ExpressionParser extends OperatorParser {
   }
 
   private parsePostfixExpression():
-    | PrefixExpression
+    | PostfixExpression
+    | CallExpression
+    | GroupExpression
     | LiteralExpression
     | Identifier {
-    return this.parseFunctionCall();
+    return this.parsePostfixHelper(
+      () => this.parseFunctionCall(),
+      [Type.operator, '++'],
+      [Type.operator, '--'],
+    );
   }
 
-  private parseFunctionCall(): LiteralExpression | Identifier {
-    return this.parseMemberAccess();
+  private parsePostfixHelper<E extends Expression>(
+    parseNext: () => E,
+    ...kinds: [Type, string][]
+  ): E {
+    const maybeOperator = this.peek(1);
+    if (
+      kinds.some(
+        (e) => e[0] === maybeOperator.type && e[1] === maybeOperator.lexeme,
+      )
+    ) {
+      const expr = this.factory.createPostfixExpression(
+        parseNext(),
+        maybeOperator,
+        this.matchPostfixOperator(maybeOperator) as PostfixOperator,
+      );
+      this.advance();
+      return (expr as unknown) as E;
+    }
+    return parseNext();
   }
 
-  private parseMemberAccess(): LiteralExpression | Identifier {
+  private parseFunctionCall():
+    | CallExpression
+    | GroupExpression
+    | LiteralExpression
+    | Identifier {
+    let expr:
+      | CallExpression
+      | GroupExpression
+      | LiteralExpression
+      | Identifier = this.parseMemberAccess();
+    while (true) {
+      if (this.check([Type.pair, '('])) {
+        expr = this.finishFunctionCall(expr);
+      } else {
+        break;
+      }
+    }
+    return expr;
+  }
+
+  private finishFunctionCall(receiver: Expression): CallExpression {
+    let leftParen = this.advance();
+    if (leftParen.type !== 'operator' || leftParen.lexeme !== '(') {
+      this.reporter.reportToken(
+        leftParen,
+        DiagnosticCode.SYNTAX_EXPECTED_PARENTHESES,
+      );
+      leftParen = leftParen.asError('(');
+    }
+    const args: Expression[] = [];
+    while (this.hasNext && !this.match([Type.pair, ')'])) {
+      args.push(this.parseExpression());
+      if (!this.match([Type.symbol, ','], [Type.pair, ')'])) {
+        this.reporter.reportToken(
+          this.peek(),
+          DiagnosticCode.SYNATX_EXPECTED_COMMA,
+        );
+      } else {
+        if (this.previous().lexeme === ')') {
+          break;
+        }
+      }
+    }
+    let rightParen = this.previous();
+    if (rightParen.type !== 'operator' || rightParen.lexeme !== ')') {
+      this.reporter.reportToken(
+        rightParen,
+        DiagnosticCode.SYNTAX_EXPECTED_PARENTHESES,
+      );
+      rightParen = rightParen.asError(')');
+    }
+    return this.factory.createCallExpression(receiver, args, rightParen);
+  }
+
+  private parseMemberAccess():
+    | GroupExpression
+    | LiteralExpression
+    | Identifier {
     return this.parseGroup();
   }
 
-  private parseGroup(): LiteralExpression | Identifier {
+  private parseGroup(): GroupExpression | LiteralExpression | Identifier {
+    if (this.match([Type.pair, '('])) {
+      const open = this.previous();
+      const expr = this.parseExpression();
+      let close = this.advance();
+      if (close.lexeme !== '(') {
+        this.reporter.reportToken(
+          close,
+          DiagnosticCode.SYNTAX_UNEXPECTED_TOKEN,
+        );
+        close = close.asError(')');
+      }
+      return this.factory.createGroupExpression(open, expr, close);
+    }
     return this.parseLiteral();
   }
 

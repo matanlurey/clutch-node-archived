@@ -22,7 +22,9 @@ export class Lexer {
   private position!: number;
   private program!: Scanner;
 
-  constructor(private readonly keywords = new Set(['func', 'let'])) {}
+  constructor(
+    private readonly keywords = new Set(['func', 'if', 'let', 'then']),
+  ) {}
 
   tokenize(program: Scanner): Token[] {
     this.position = 0;
@@ -42,13 +44,11 @@ export class Lexer {
     const character = this.program.advance();
     switch (character) {
       // PAIRS OF CHARACTERS ======
-      // (, ), {, }, <, >
+      // (, ), {, }, <, >, <=, >=
       case Characters.$LPAREN:
       case Characters.$RPAREN:
       case Characters.$LCURLY:
       case Characters.$RCURLY:
-      case Characters.$LANGLE:
-      case Characters.$RANGLE:
         return this.createToken(Type.pair);
       // SYMBOLS (NOT OPERATORS) ==
       // :, .
@@ -57,25 +57,49 @@ export class Lexer {
         return this.createToken(Type.symbol);
       // OPERATORS ================
       // +, *, /, %
-      case Characters.$PLUS: /// +
-      case Characters.$STAR: /// *
+      case Characters.$PLUS:
+        this.program.match(Characters.$PLUS);
+        return this.createToken(Type.operator);
+      case Characters.$STAR:
       case Characters.$RSLASH:
-      case Characters.$PERCENT: // %
+      case Characters.$PERCENT:
+      case Characters.$AMPERSAND:
+        if (this.program.match(Characters.$AMPERSAND)) {
+          return this.createToken(Type.operator);
+        }
+      case Characters.$PIPE:
+        if (this.program.match(Characters.$PIPE)) {
+          return this.createToken(Type.operator);
+        }
+      case Characters.$LANGLE:
+        if (this.program.match(Characters.$LANGLE)) {
+          return this.createToken(Type.operator);
+        }
+        this.program.match(Characters.$EQUALS);
+        return this.createToken(Type.operator);
+      case Characters.$RANGLE:
+        if (this.program.match(Characters.$RANGLE)) {
+          return this.createToken(Type.operator);
+        }
+        this.program.match(Characters.$EQUALS);
         return this.createToken(Type.operator);
       // OPERATORS or SYMBOLS =====
-      // =, ==, !=, !, -, ->
+      // =, ==, !=, !, -, ->, ","
       case Characters.$EQUALS: // = or ==
         this.program.match(Characters.$EQUALS);
         return this.createToken(Type.operator);
       case Characters.$EXCLAIM: // ! or !=
         this.program.match(Characters.$EQUALS);
         return this.createToken(Type.operator);
-      case Characters.$HYPHEN: // - or ->
+      case Characters.$HYPHEN: // - or -- or ->
         if (this.program.match(Characters.$RANGLE)) {
           return this.createToken(Type.symbol);
         } else {
+          this.program.match(Characters.$HYPHEN);
           return this.createToken(Type.operator);
         }
+      case Characters.$COMMA: // ,
+        return this.createToken(Type.symbol);
       default:
         if (isWhiteSpace(character)) {
           this.position = this.program.position;

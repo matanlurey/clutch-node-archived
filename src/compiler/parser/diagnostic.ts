@@ -132,6 +132,26 @@ export class DiagnosticCode {
     DiagnosticCategory.error,
   );
 
+  static readonly SYNATX_EXPECTED_COMMA = new DiagnosticCode(
+    'SYNATX_EXPECTED_COMMA',
+    DiagnosticCategory.error,
+  );
+
+  static readonly SYNTAX_EXPECTED_ELSE = new DiagnosticCode(
+    'SYNTAX_EXPECTED_ELSE',
+    DiagnosticCategory.error,
+  );
+
+  static readonly SYNTAX_EXPECTED_PARENTHESES = new DiagnosticCode(
+    'SYNTAX_EXPECTED_PARENTHESES',
+    DiagnosticCategory.error,
+  );
+
+  static readonly SYNTAX_EXPECTED_THEN = new DiagnosticCode(
+    'SYNTAX_EXPECTED_THEN',
+    DiagnosticCategory.error,
+  );
+
   private constructor(
     readonly name: string,
     readonly category: DiagnosticCategory,

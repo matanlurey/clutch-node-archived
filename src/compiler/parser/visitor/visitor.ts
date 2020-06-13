@@ -4,8 +4,12 @@ import { Parameter, ParameterList } from '../ast/declaration/parameter';
 import { TypeDefinition } from '../ast/declaration/type';
 import { VariableDeclaration } from '../ast/declaration/variable';
 import { BinaryExpression } from '../ast/expression/binary';
+import { CallExpression } from '../ast/expression/call';
+import { ConditionalExpression } from '../ast/expression/conditional';
+import { GroupExpression } from '../ast/expression/group';
 import { Identifier } from '../ast/expression/identifier';
 import { LiteralBoolean, LiteralNumber } from '../ast/expression/literal';
+import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
 import { StatementBlock } from '../ast/statement/block';
 import { CompilationUnit } from '../ast/unit';
@@ -13,12 +17,21 @@ import { CompilationUnit } from '../ast/unit';
 export abstract class AstVisitor<R, C> {
   abstract visitBinaryExpression(astNode: BinaryExpression, context?: C): R;
 
+  abstract visitCallExpression(astNode: CallExpression, context?: C): R;
+
   abstract visitCompilationUnit(astNode: CompilationUnit, context?: C): R;
+
+  abstract visitConditionalExpression(
+    astNode: ConditionalExpression,
+    context?: C,
+  ): R;
 
   abstract visitFunctionDeclaration(
     astNode: FunctionDeclaration,
     context?: C,
   ): R;
+
+  abstract visitGroupExpression(astNode: GroupExpression, context?: C): R;
 
   abstract visitIdentifier(astNode: Identifier, context?: C): R;
 
@@ -29,6 +42,8 @@ export abstract class AstVisitor<R, C> {
   abstract visitParameter(astNode: Parameter, context?: C): R;
 
   abstract visitParameterList(astNode: ParameterList, context?: C): R;
+
+  abstract visitPostfixExpression(astNode: PostfixExpression, context?: C): R;
 
   abstract visitPrefixExpression(astNode: PrefixExpression, context?: C): R;
 

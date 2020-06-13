@@ -54,6 +54,10 @@ export enum OperatorType {
   UnaryNegative,
   UnaryPositive,
   Negation,
+  PreDecrement,
+  PreIncrement,
+  PostDecrement,
+  PostIncrement,
   Addition,
   Subtraction,
   Multiplication,
@@ -62,6 +66,14 @@ export enum OperatorType {
   Equality,
   Inequality,
   Assignment,
+  GreaterThan,
+  GreaterThanOrEquals,
+  LessThan,
+  LessThanOrEquals,
+  And,
+  Or,
+  BitwiseShiftRight,
+  BitwiseShiftLeft,
   InvalidOrError,
 }
 
@@ -76,7 +88,15 @@ export type BinaryOperator =
   | OperatorType.Remainder
   | OperatorType.Equality
   | OperatorType.Inequality
-  | OperatorType.Assignment;
+  | OperatorType.Assignment
+  | OperatorType.And
+  | OperatorType.Or
+  | OperatorType.GreaterThan
+  | OperatorType.GreaterThanOrEquals
+  | OperatorType.LessThan
+  | OperatorType.LessThanOrEquals
+  | OperatorType.BitwiseShiftRight
+  | OperatorType.BitwiseShiftLeft;
 
 /**
  * Valid prefix operator types.
@@ -84,7 +104,16 @@ export type BinaryOperator =
 export type PrefixOperator =
   | OperatorType.UnaryNegative
   | OperatorType.UnaryPositive
-  | OperatorType.Negation;
+  | OperatorType.Negation
+  | OperatorType.PreDecrement
+  | OperatorType.PreIncrement;
+
+/**
+ * Valid postfix operator types.
+ */
+export type PostfixOperator =
+  | OperatorType.PostDecrement
+  | OperatorType.PostIncrement;
 
 /**
  * Represents a marker type of AST nodes for all declarations.

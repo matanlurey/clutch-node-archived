@@ -54,6 +54,14 @@ describe('should find a valid binary operator', () => {
     expect(parse('!=')).toBe(OperatorType.Inequality);
   });
 
+  it('&&', () => {
+    expect(parse('&&')).toBe(OperatorType.And);
+  });
+
+  it('||', () => {
+    expect(parse('||')).toBe(OperatorType.Or);
+  });
+
   it('[should reject unknown]', () => {
     expect(parse('!')).toBe(OperatorType.InvalidOrError);
   });

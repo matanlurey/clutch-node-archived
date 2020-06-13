@@ -4,6 +4,7 @@ import {
   BinaryOperator,
   Declaration,
   Expression,
+  PostfixOperator,
   PrefixOperator,
   Statement,
 } from './ast/ast';
@@ -12,8 +13,12 @@ import { Parameter, ParameterList } from './ast/declaration/parameter';
 import { TypeDefinition } from './ast/declaration/type';
 import { VariableDeclaration } from './ast/declaration/variable';
 import { BinaryExpression } from './ast/expression/binary';
+import { CallExpression } from './ast/expression/call';
+import { ConditionalExpression } from './ast/expression/conditional';
+import { GroupExpression } from './ast/expression/group';
 import { Identifier } from './ast/expression/identifier';
 import { LiteralBoolean, LiteralNumber } from './ast/expression/literal';
+import { PostfixExpression } from './ast/expression/postfix';
 import { PrefixExpression } from './ast/expression/prefix';
 import { StatementBlock } from './ast/statement/block';
 import { CompilationUnit } from './ast/unit';
@@ -35,6 +40,14 @@ export class AstFactory {
     return new BinaryExpression(left, right, operator);
   }
 
+  createCallExpression(
+    receiver: Expression,
+    argumentList: Expression[],
+    lastToken: Token,
+  ): CallExpression {
+    return new CallExpression(receiver, argumentList, lastToken);
+  }
+
   /**
    * @see CompilationUnit
    */
@@ -43,6 +56,18 @@ export class AstFactory {
     eof: Token,
   ): CompilationUnit {
     return new CompilationUnit(declarations, eof);
+  }
+
+  /**
+   * @see ConditionalExpression
+   */
+  createConditionalExpression(
+    ifToken: Token,
+    condition: Expression,
+    thenExpr: Expression,
+    elseExpr: Expression,
+  ): ConditionalExpression {
+    return new ConditionalExpression(ifToken, condition, thenExpr, elseExpr);
   }
 
   /**
@@ -64,6 +89,20 @@ export class AstFactory {
     );
   }
 
+  /**
+   * @see GroupExpression
+   */
+  createGroupExpression(
+    open: Token,
+    expr: Expression,
+    close: Token,
+  ): GroupExpression {
+    return new GroupExpression(open, expr, close);
+  }
+
+  /**
+   * @see Identifier
+   */
   createIdentifier(identifier: Token): Identifier {
     return new Identifier(identifier);
   }
@@ -113,6 +152,17 @@ export class AstFactory {
     operator: PrefixOperator,
   ): PrefixExpression {
     return new PrefixExpression(expression, operatorToken, operator);
+  }
+
+  /**
+   * @see PostfixExpression
+   */
+  createPostfixExpression(
+    expression: Expression,
+    operatorToken: Token,
+    operator: PostfixOperator,
+  ): PostfixExpression {
+    return new PostfixExpression(expression, operatorToken, operator);
   }
 
   /**

@@ -21,7 +21,89 @@ describe('should', () => {
     return parser(program).parseExpression().accept(humanizer).toString();
   }
 
-  it('should fail on invalid context [expected identifier]', () => {
+  it('parse function calls', () => {
+    expect(parse('a()')).toBe('a()');
+    expect(parse('a(b)')).toBe('a(b)');
+    expect(parse('a(b, c)')).toBe('a(b, c)');
+  });
+
+  it('parse ||', () => {
+    expect(parse('a || b')).toBe('a || b');
+  });
+
+  it('parse &&', () => {
+    expect(parse('a && b')).toBe('a && b');
+  });
+
+  it('parse prefixes', () => {
+    expect(parser('--a').parseExpression()).toMatchInlineSnapshot(`
+      PrefixExpression {
+        "expression": Identifier {
+          "token": Token {
+            "error": false,
+            "lexeme": "a",
+            "offset": 2,
+            "type": "identifier",
+          },
+        },
+        "operator": 3,
+        "operatorToken": Token {
+          "error": false,
+          "lexeme": "--",
+          "offset": 0,
+          "type": "operator",
+        },
+      }
+    `);
+    expect(parse('--a')).toBe('--a');
+    expect(parse('++a')).toBe('++a');
+  });
+
+  it('parse postfixes', () => {
+    expect(parser('a--').parseExpression()).toMatchInlineSnapshot(`
+      PostfixExpression {
+        "expression": Identifier {
+          "token": Token {
+            "error": false,
+            "lexeme": "a",
+            "offset": 0,
+            "type": "identifier",
+          },
+        },
+        "operator": 5,
+        "operatorToken": Token {
+          "error": false,
+          "lexeme": "--",
+          "offset": 1,
+          "type": "operator",
+        },
+      }
+    `);
+    expect(parse('a--')).toBe('a--');
+    expect(parse('a++')).toBe('a++');
+  });
+
+  it('parse comparisons', () => {
+    expect(parse('a > b')).toBe('a > b');
+    expect(parse('a < b')).toBe('a < b');
+    expect(parse('a >= b')).toBe('a >= b');
+    expect(parse('a <= b')).toBe('a <= b');
+  });
+
+  it('parse bitwise shift', () => {
+    expect(parse('a >> b')).toBe('a >> b');
+    expect(parse('a << b')).toBe('a << b');
+  });
+
+  it('parse conditional', () => {
+    expect(parse('if a then b else c')).toBe('if a then b else c');
+  });
+
+  it('parse group', () => {
+    expect(parse('(a)')).toBe('(a)');
+  });
+
+  it('fail on invalid context [expected identifier]', () => {
     expect(parse('func')).toBe('ಠ_ಠ');
   });
 
@@ -76,7 +158,7 @@ describe('should', () => {
             "type": "identifier",
           },
         },
-        "operator": 3,
+        "operator": 7,
         "right": Identifier {
           "token": Token {
             "error": false,
