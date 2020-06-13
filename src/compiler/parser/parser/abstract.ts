@@ -1,5 +1,5 @@
 import { Token, Type } from '../../lexer/token';
-import { DiagnosticReporter } from '../diagnostic';
+import { DiagnosticCode, DiagnosticReporter } from '../diagnostic';
 import { AstFactory } from '../factory';
 
 /**
@@ -19,7 +19,7 @@ export class ParseError extends Error {
  * Base parser implementation including only helper functionality.
  */
 export abstract class AbstractParser {
-  private position = 0;
+  protected position = 0;
 
   constructor(
     protected readonly program: Token[],
@@ -62,6 +62,24 @@ export abstract class AbstractParser {
     } else {
       return true;
     }
+  }
+
+  /**
+   * Produces a recovery token and reports a syntax error.
+   *
+   * @param type
+   * @param lexeme
+   * @param backtrack
+   */
+  protected recover(
+    error: DiagnosticCode,
+    type: Type,
+    lexeme: string,
+    backtrack = -1,
+  ): Token {
+    const offset = this.position + backtrack;
+    this.reporter.reportOffset(offset, 1, error);
+    return new Token(offset, type, lexeme, true);
   }
 
   /**

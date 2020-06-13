@@ -14,7 +14,7 @@ export class Diagnostic {
   ) {}
 
   toString(): string {
-    const span = this.source.span(this.offset, this.length - this.offset);
+    const span = this.source.span(this.offset, this.offset + this.length);
     return `[${this.code.category.toUpperCase()}] ${span}: (${this.code.name})`;
   }
 }
@@ -114,6 +114,11 @@ export enum DiagnosticCategory {
 export class DiagnosticCode {
   static readonly SYNTAX_END_OF_FILE = new DiagnosticCode(
     'SYNTAX_END_OF_FILE',
+    DiagnosticCategory.error,
+  );
+
+  static readonly SYNTAX_EXPECTED_DECLARATION = new DiagnosticCode(
+    'SYNTAX_EXPECTED_DECLARATION',
     DiagnosticCategory.error,
   );
 

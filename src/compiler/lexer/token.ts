@@ -3,12 +3,6 @@
  * Represents a scanned token during the lexing phase.
  */
 export class Token<T extends Type = Type> {
-  static readonly identifier = 'identifier';
-  static readonly operator = 'operator';
-  static readonly pair = 'pair';
-  static readonly recovery = 'recovery';
-  static readonly symbol = 'symbol';
-
   /**
    * Creates a new scanned token.
    * @param offset Offset the token starts at.
@@ -24,10 +18,6 @@ export class Token<T extends Type = Type> {
 
   get length(): number {
     return this.lexeme.length;
-  }
-
-  asError(lexme = 'ಠ_ಠ'): Token {
-    return new Token(this.offset, this.type, lexme, true);
   }
 }
 

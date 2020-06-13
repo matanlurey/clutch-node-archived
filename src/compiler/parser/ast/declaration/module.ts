@@ -3,7 +3,16 @@ import { AstVisitor } from '../../visitor/visitor';
 import { AstNode, Declaration } from '../ast';
 import { Identifier } from '../expression/identifier';
 
+/**
+ * Root of module(s), often considered a full source file.
+ */
 export class ModuleRoot extends AstNode {
+  /**
+   * Creates a new module root declaration.
+   *
+   * @param modules List of modules in the file. Often this is a single module.
+   * @param endOfFile End of file token.
+   */
   constructor(
     readonly modules: ModuleDeclaration[],
     private readonly endOfFile: Token,
@@ -24,7 +33,18 @@ export class ModuleRoot extends AstNode {
   }
 }
 
+/**
+ * Module declaration, often implicit.
+ */
 export class ModuleDeclaration extends Declaration {
+  /**
+   * Create a new module declaration.
+   *
+   * @param declarations Top-level declarations in the file.
+   * @param keyword If explicit, the `module` keyword.
+   * @param name If explicit, and if explicitly defined, the name of the module.
+   * @param endBlock If a block, the `}` token/symbol.
+   */
   constructor(
     readonly declarations: Declaration[],
     readonly keyword?: Token,

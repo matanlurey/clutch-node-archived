@@ -93,4 +93,11 @@ describe('SourceFile', () => {
       expect(d.column).toBe(3);
     });
   });
+
+  it('should parse a one-line file', () => {
+    const file = new SourceFile('func main() {}');
+    const span = file.span(12, 13);
+    expect(span.line).toBe(0);
+    expect(span.column).toBe(12);
+  });
 });

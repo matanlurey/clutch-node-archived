@@ -6,9 +6,16 @@ import { Expression } from '../ast';
  * Represents a call expression.
  */
 export class CallExpression extends Expression {
+  /**
+   * Creates a new call expression.
+   *
+   * @param receiver Callable receiver.
+   * @param parameters Parameters, if any.
+   * @param lastToken `)` token.
+   */
   constructor(
     readonly receiver: Expression,
-    readonly argumentList: Expression[],
+    readonly parameters: Expression[],
     readonly lastToken: Token,
   ) {
     super();

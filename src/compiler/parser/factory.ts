@@ -141,11 +141,11 @@ export class AstFactory {
    * @see Parameter
    */
   createParameter(
-    nameToken: Token,
+    name: Identifier,
     type?: Identifier,
     value?: Expression,
   ): Parameter {
-    return new Parameter(nameToken, type, value);
+    return new Parameter(name, type, value);
   }
 
   /**

@@ -8,39 +8,33 @@ import { Identifier } from '../expression/identifier';
  * Represents a parameter within a @see ParameterList.
  */
 export class Parameter extends AstNode {
-  readonly firstToken: Token;
-
   /**
    * Creates a new parameter.
    *
    * This constructor is not intended to be used directly; @see AstFactory.
    *
-   * @param nameToken Token that is the name of the parameter.
+   * @param name Token that is the name of the parameter.
    * @param type If the parameter has a type, the type definition.
    * @param value If the parameter has an initial value, the expression.
    */
   constructor(
-    private readonly nameToken: Token,
+    readonly name: Identifier,
     readonly type?: Identifier,
     readonly value?: Expression,
   ) {
     super();
-    this.firstToken = nameToken;
   }
 
   accept<R, C>(visitor: AstVisitor<R, C>, context?: C): R {
     return visitor.visitParameter(this, context);
   }
 
-  get lastToken(): Token {
-    return this.value?.lastToken || this.type?.lastToken || this.nameToken;
+  get firstToken(): Token {
+    return this.name.firstToken;
   }
 
-  /**
-   * Name of the parameter.
-   */
-  get name(): string {
-    return this.nameToken.lexeme;
+  get lastToken(): Token {
+    return this.value?.lastToken || this.type?.lastToken || this.name.lastToken;
   }
 }
 

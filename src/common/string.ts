@@ -117,8 +117,12 @@ export class StringWriter {
    * @param object
    */
   write(object: unknown): StringWriter {
-    this.buffer += `${this.indents}${object}`;
+    this.buffer += `${object}`;
     return this;
+  }
+
+  writeIndented(object: unknown): StringWriter {
+    return this.write(`${this.indents}${object}`);
   }
 
   /**
@@ -127,8 +131,7 @@ export class StringWriter {
    * @param object
    */
   writeLine(object: unknown = ''): StringWriter {
-    this.write(`${object}\n`);
-    return this;
+    return this.write(`${object}\n`);
   }
 
   /**

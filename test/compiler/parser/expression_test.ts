@@ -1,16 +1,17 @@
 import { Scanner } from '../../../src/common/scanner';
 import { SourceFile } from '../../../src/common/source';
 import { Lexer } from '../../../src/compiler/lexer/lexer';
-import { DiagnosticReporter } from '../../../src/compiler/parser/diagnostic';
+import {
+  DiagnosticError,
+  DiagnosticReporter,
+} from '../../../src/compiler/parser/diagnostic';
 import { ExpressionParser } from '../../../src/compiler/parser/parser/expression';
 import { Humanizer } from '../../../src/compiler/parser/visitor/humanizer';
 
 function parser(program: string): ExpressionParser {
-  const source = new SourceFile(program, 'operator_test.ts');
+  const source = new SourceFile(program, 'expression_test.ts');
   const tokens = new Lexer().tokenize(new Scanner(source));
-  const reporter = new DiagnosticReporter(source, (): void => {
-    // Ignore.
-  });
+  const reporter = new DiagnosticReporter(source);
   return new ExpressionParser(tokens, reporter);
 }
 
@@ -31,6 +32,7 @@ describe('should', () => {
     expect(parse('a(b)')).toBe('a(b)');
     expect(parse('a(b, c)')).toBe('a(b, c)');
     expect(parse('a()()')).toBe('a()()');
+    expect(parse('print()')).toBe('print()');
   });
 
   it('parse ||', () => {
@@ -110,7 +112,7 @@ describe('should', () => {
   });
 
   it('fail on invalid context [expected identifier]', () => {
-    expect(parse('func')).toBe('ಠ_ಠ');
+    expect(() => parse('func')).toThrowError(DiagnosticError);
   });
 
   it('parse identifiers', () => {
