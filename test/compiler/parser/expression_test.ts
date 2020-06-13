@@ -21,10 +21,16 @@ describe('should', () => {
     return parser(program).parseExpression().accept(humanizer).toString();
   }
 
+  it('parse member access', () => {
+    expect(parse('a.b')).toBe('a.b');
+    expect(parse('a.b.c')).toBe('a.b.c');
+  });
+
   it('parse function calls', () => {
     expect(parse('a()')).toBe('a()');
     expect(parse('a(b)')).toBe('a(b)');
     expect(parse('a(b, c)')).toBe('a(b, c)');
+    expect(parse('a()()')).toBe('a()()');
   });
 
   it('parse ||', () => {

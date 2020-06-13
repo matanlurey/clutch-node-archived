@@ -20,6 +20,7 @@ import { Identifier } from './ast/expression/identifier';
 import { LiteralBoolean, LiteralNumber } from './ast/expression/literal';
 import { PostfixExpression } from './ast/expression/postfix';
 import { PrefixExpression } from './ast/expression/prefix';
+import { PropertyExpression } from './ast/expression/property';
 import { StatementBlock } from './ast/statement/block';
 import { CompilationUnit } from './ast/unit';
 
@@ -152,6 +153,16 @@ export class AstFactory {
     operator: PrefixOperator,
   ): PrefixExpression {
     return new PrefixExpression(expression, operatorToken, operator);
+  }
+
+  /**
+   * @see PropertyExpression
+   */
+  createPropertyExpresson(
+    receiver: Expression,
+    property: Identifier,
+  ): PropertyExpression {
+    return new PropertyExpression(receiver, property);
   }
 
   /**

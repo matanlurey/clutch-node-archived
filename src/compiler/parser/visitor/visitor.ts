@@ -11,6 +11,7 @@ import { Identifier } from '../ast/expression/identifier';
 import { LiteralBoolean, LiteralNumber } from '../ast/expression/literal';
 import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
+import { PropertyExpression } from '../ast/expression/property';
 import { StatementBlock } from '../ast/statement/block';
 import { CompilationUnit } from '../ast/unit';
 
@@ -46,6 +47,8 @@ export abstract class AstVisitor<R, C> {
   abstract visitPostfixExpression(astNode: PostfixExpression, context?: C): R;
 
   abstract visitPrefixExpression(astNode: PrefixExpression, context?: C): R;
+
+  abstract visitPropertyExpression(astNode: PropertyExpression, context?: C): R;
 
   abstract visitRecoveryNode(astNode: RecoveryNode, context?: C): R;
 

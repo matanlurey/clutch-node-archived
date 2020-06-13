@@ -13,6 +13,7 @@ import { Identifier } from '../ast/expression/identifier';
 import { LiteralExpression } from '../ast/expression/literal';
 import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
+import { PropertyExpression } from '../ast/expression/property';
 import { DiagnosticCode } from '../diagnostic';
 import { OperatorParser } from './operator';
 
@@ -37,6 +38,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -57,6 +59,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -94,6 +97,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -108,6 +112,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -122,6 +127,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -137,6 +143,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -154,6 +161,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -169,6 +177,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -201,6 +210,7 @@ export class ExpressionParser extends OperatorParser {
     | PrefixExpression
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -233,6 +243,7 @@ export class ExpressionParser extends OperatorParser {
   private parsePostfixExpression():
     | PostfixExpression
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
@@ -266,11 +277,13 @@ export class ExpressionParser extends OperatorParser {
 
   private parseFunctionCall():
     | CallExpression
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
     let expr:
       | CallExpression
+      | PropertyExpression
       | GroupExpression
       | LiteralExpression
       | Identifier = this.parseMemberAccess();
@@ -319,10 +332,20 @@ export class ExpressionParser extends OperatorParser {
   }
 
   private parseMemberAccess():
+    | PropertyExpression
     | GroupExpression
     | LiteralExpression
     | Identifier {
-    return this.parseGroup();
+    let expr:
+      | PropertyExpression
+      | GroupExpression
+      | LiteralExpression
+      | Identifier = this.parseGroup();
+    while (this.hasNext && this.match([Type.symbol, '.'])) {
+      const name = this.parseIdentifier();
+      expr = this.factory.createPropertyExpresson(expr, name);
+    }
+    return expr;
   }
 
   private parseGroup(): GroupExpression | LiteralExpression | Identifier {

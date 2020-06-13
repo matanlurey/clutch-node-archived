@@ -12,6 +12,7 @@ import { Identifier } from '../ast/expression/identifier';
 import { LiteralBoolean, LiteralNumber } from '../ast/expression/literal';
 import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
+import { PropertyExpression } from '../ast/expression/property';
 import { StatementBlock } from '../ast/statement/block';
 import { CompilationUnit } from '../ast/unit';
 import { AstVisitor } from './visitor';
@@ -245,6 +246,14 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     }
     astNode.expression.accept(this, context);
     return context.write(operator);
+  }
+
+  visitPropertyExpression(
+    astNode: PropertyExpression,
+    context = new StringWriter(),
+  ): StringWriter {
+    astNode.receiver.accept(this, context).write('.');
+    return astNode.property.accept(this, context);
   }
 
   visitRecoveryNode(
