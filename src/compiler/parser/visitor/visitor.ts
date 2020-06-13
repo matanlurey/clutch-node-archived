@@ -1,7 +1,7 @@
 import { RecoveryNode } from '../ast/ast';
 import { FunctionDeclaration } from '../ast/declaration/function';
+import { ModuleDeclaration, ModuleRoot } from '../ast/declaration/module';
 import { Parameter, ParameterList } from '../ast/declaration/parameter';
-import { TypeDefinition } from '../ast/declaration/type';
 import { BinaryExpression } from '../ast/expression/binary';
 import { CallExpression } from '../ast/expression/call';
 import { ConditionalExpression } from '../ast/expression/conditional';
@@ -41,6 +41,10 @@ export abstract class AstVisitor<R, C> {
 
   abstract visitLiteralNumber(astNode: LiteralNumber, context?: C): R;
 
+  abstract visitModuleDeclaration(astNode: ModuleDeclaration, context?: C): R;
+
+  abstract visitModuleRoot(astNode: ModuleRoot, context?: C): R;
+
   abstract visitParameter(astNode: Parameter, context?: C): R;
 
   abstract visitParameterList(astNode: ParameterList, context?: C): R;
@@ -56,8 +60,6 @@ export abstract class AstVisitor<R, C> {
   abstract visitReturnStatement(astNode: ReturnStatement, context?: C): R;
 
   abstract visitStatementBlock(astNode: StatementBlock, context?: C): R;
-
-  abstract visitTypeDefinition(astNode: TypeDefinition, context?: C): R;
 
   abstract visitVariableDefinition(astNode: VariableDefinition, context?: C): R;
 }

@@ -9,8 +9,8 @@ import {
   Statement,
 } from './ast/ast';
 import { FunctionDeclaration } from './ast/declaration/function';
+import { ModuleDeclaration, ModuleRoot } from './ast/declaration/module';
 import { Parameter, ParameterList } from './ast/declaration/parameter';
-import { TypeDefinition } from './ast/declaration/type';
 import { BinaryExpression } from './ast/expression/binary';
 import { CallExpression } from './ast/expression/call';
 import { ConditionalExpression } from './ast/expression/conditional';
@@ -76,15 +76,15 @@ export class AstFactory {
    * @see FunctionDeclaration
    */
   createFunctionDeclaration(
-    funcToken: Token,
-    nameToken: Token,
+    keyword: Token,
+    name: Identifier,
     parameters?: ParameterList,
-    returnType?: TypeDefinition,
+    returnType?: Identifier,
     statements?: StatementBlock,
   ): FunctionDeclaration {
     return new FunctionDeclaration(
-      funcToken,
-      nameToken,
+      keyword,
+      name,
       parameters,
       returnType,
       statements,
@@ -124,11 +124,25 @@ export class AstFactory {
   }
 
   /**
+   * @see ModuleDeclaration
+   */
+  createModuleDeclaration(declarations: Declaration[]): ModuleDeclaration {
+    return new ModuleDeclaration(declarations);
+  }
+
+  /**
+   * @see ModuleRoot
+   */
+  createModuleRoot(modules: ModuleDeclaration[], endOfFile: Token): ModuleRoot {
+    return new ModuleRoot(modules, endOfFile);
+  }
+
+  /**
    * @see Parameter
    */
   createParameter(
     nameToken: Token,
-    type?: TypeDefinition,
+    type?: Identifier,
     value?: Expression,
   ): Parameter {
     return new Parameter(nameToken, type, value);
@@ -196,13 +210,6 @@ export class AstFactory {
     statements: Statement[],
   ): StatementBlock {
     return new StatementBlock(firstToken, lastToken, statements);
-  }
-
-  /**
-   * @see TypeDefinition
-   */
-  createTypeDefinition(name: Token): TypeDefinition {
-    return new TypeDefinition(name);
   }
 
   /**

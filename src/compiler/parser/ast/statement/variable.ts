@@ -19,7 +19,7 @@ export class VariableDefinition extends Statement {
    * @param initalValue If the variable has an initial value, the expression.
    */
   constructor(
-    private readonly define: Token,
+    private readonly define: Token | undefined,
     readonly name: Identifier,
     readonly type?: Identifier,
     readonly initalValue?: Expression,
@@ -32,7 +32,7 @@ export class VariableDefinition extends Statement {
   }
 
   get firstToken(): Token {
-    return this.define;
+    return this.define || this.name.firstToken;
   }
 
   get lastToken(): Token {
