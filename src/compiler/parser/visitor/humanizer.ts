@@ -28,7 +28,7 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     context = new StringWriter(),
   ): StringWriter {
     astNode.left.accept(this, context);
-    let operator;
+    let operator: string;
     switch (astNode.operator) {
       case OperatorType.Addition:
         operator = '+';
@@ -91,8 +91,8 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
   ): StringWriter {
     astNode.receiver.accept(this, context);
     context.write('(');
-    astNode.argumentList.forEach((arg, index) => {
-      const last = index === astNode.argumentList.length - 1;
+    astNode.parameters.forEach((arg, index) => {
+      const last = index === astNode.parameters.length - 1;
       arg.accept(this, context);
       if (!last) {
         context.write(', ');
@@ -208,9 +208,9 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     astNode: Parameter,
     context = new StringWriter(),
   ): StringWriter {
-    context.write(astNode.name);
+    context.write(astNode.name.name);
     if (astNode.type) {
-      context.write(` : `);
+      context.write(`: `);
       astNode.type.accept(this, context);
     }
     if (astNode.value) {
@@ -313,6 +313,7 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     }
     context.write('{').writeLine().indent(2);
     astNode.statements.forEach((statement) => {
+      context.writeIndented('');
       statement.accept(this, context);
     });
     return context.writeLine().indent(-2).write('}');

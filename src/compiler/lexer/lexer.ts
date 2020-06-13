@@ -15,6 +15,12 @@ function isIdentifier(character: number): boolean {
   return isIdentifierStart(character) || isDigit(character);
 }
 
+export class UnexpectedTokenError extends Error {
+  constructor(readonly offset: number, readonly text: string) {
+    super(`Unexpected token: ${text} at offset ${offset}.`);
+  }
+}
+
 /**
  * Tokenizees and returns a program as a series of tokens.
  */
@@ -205,7 +211,6 @@ export class Lexer {
    */
   private error(offset = this.position, length = 1): never {
     const string = this.program.substring(offset, offset + length);
-    console.log({ offset, length, string });
-    throw new Error(`Unexpected token: \`${string}\` at ${offset}.`);
+    throw new UnexpectedTokenError(offset, string);
   }
 }

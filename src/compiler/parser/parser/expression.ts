@@ -294,7 +294,7 @@ export class ExpressionParser extends OperatorParser {
       | LiteralExpression
       | Identifier = this.parseMemberAccess();
     while (true) {
-      if (this.check([Type.pair, '('])) {
+      if (this.match([Type.pair, '('])) {
         expr = this.finishFunctionCall(expr);
       } else {
         break;
@@ -304,14 +304,6 @@ export class ExpressionParser extends OperatorParser {
   }
 
   private finishFunctionCall(receiver: Expression): CallExpression {
-    let leftParen = this.advance();
-    if (leftParen.type !== 'operator' || leftParen.lexeme !== '(') {
-      this.reporter.reportToken(
-        leftParen,
-        DiagnosticCode.SYNTAX_EXPECTED_PARENTHESES,
-      );
-      leftParen = leftParen.asError('(');
-    }
     const args: Expression[] = [];
     while (this.hasNext && !this.match([Type.pair, ')'])) {
       args.push(this.parseExpression());
@@ -327,12 +319,16 @@ export class ExpressionParser extends OperatorParser {
       }
     }
     let rightParen = this.previous();
-    if (rightParen.type !== 'operator' || rightParen.lexeme !== ')') {
+    if (rightParen.lexeme !== ')') {
       this.reporter.reportToken(
         rightParen,
         DiagnosticCode.SYNTAX_EXPECTED_PARENTHESES,
       );
-      rightParen = rightParen.asError(')');
+      rightParen = this.recover(
+        DiagnosticCode.SYNTAX_EXPECTED_PARENTHESES,
+        Type.operator,
+        ')',
+      );
     }
     return this.factory.createCallExpression(receiver, args, rightParen);
   }
@@ -359,12 +355,16 @@ export class ExpressionParser extends OperatorParser {
       const open = this.previous();
       const expr = this.parseExpression();
       let close = this.advance();
-      if (close.lexeme !== '(') {
+      if (close.lexeme !== ')') {
         this.reporter.reportToken(
           close,
           DiagnosticCode.SYNTAX_UNEXPECTED_TOKEN,
         );
-        close = close.asError(')');
+        close = this.recover(
+          DiagnosticCode.SYNTAX_EXPECTED_PARENTHESES,
+          Type.operator,
+          ')',
+        );
       }
       return this.factory.createGroupExpression(open, expr, close);
     }
@@ -388,6 +388,8 @@ export class ExpressionParser extends OperatorParser {
 
   private fatalExpectedIdentifier(token: Token): Identifier {
     this.reporter.reportToken(token, DiagnosticCode.SYNTAX_EXPECTED_IDENTIFIER);
-    return this.factory.createIdentifier(token.asError());
+    return this.factory.createIdentifier(
+      new Token(token.offset, Type.identifier, '', true),
+    );
   }
 }

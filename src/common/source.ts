@@ -71,9 +71,9 @@ export class FileSpan implements StringSpan {
   }
 
   toString(): string {
-    return `${this.file.url || '<Unknown>'}:${this.line}:${this.column}:${
+    return `${this.file.url || '<Unknown>'}:${this.line}:${this.column} "${
       this.text
-    }`;
+    }"`;
   }
 }
 
@@ -137,7 +137,7 @@ export class SourceFile {
       return [0, offset];
     }
     const line = binarySearch(lineStarts, offset);
-    const start = lineStarts[line];
+    const start = lineStarts[line] || 0;
     return [line + 1, Math.abs(start - offset)];
   }
 

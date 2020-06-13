@@ -16,7 +16,7 @@ export class FunctionDeclaration extends Declaration {
    * This constructor is not intended to be used directly; @see AstFactory.
    *
    * @param keyword Token "func".
-   * @param nameToken Name of the function.
+   * @param name Name of the function.
    * @param parameters If the function has parameters, the parameters.
    * @param returnType If the function has a return type, the return type.
    * @param statements If the function has a body, the statements.
