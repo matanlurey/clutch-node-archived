@@ -11,7 +11,6 @@ import {
 import { FunctionDeclaration } from './ast/declaration/function';
 import { Parameter, ParameterList } from './ast/declaration/parameter';
 import { TypeDefinition } from './ast/declaration/type';
-import { VariableDeclaration } from './ast/declaration/variable';
 import { BinaryExpression } from './ast/expression/binary';
 import { CallExpression } from './ast/expression/call';
 import { ConditionalExpression } from './ast/expression/conditional';
@@ -22,6 +21,8 @@ import { PostfixExpression } from './ast/expression/postfix';
 import { PrefixExpression } from './ast/expression/prefix';
 import { PropertyExpression } from './ast/expression/property';
 import { StatementBlock } from './ast/statement/block';
+import { ReturnStatement } from './ast/statement/return';
+import { VariableDefinition } from './ast/statement/variable';
 import { CompilationUnit } from './ast/unit';
 
 /**
@@ -177,6 +178,16 @@ export class AstFactory {
   }
 
   /**
+   * @see ReturnStatement
+   */
+  createReturnStatement(
+    keyword: Token,
+    expression: Expression,
+  ): ReturnStatement {
+    return new ReturnStatement(keyword, expression);
+  }
+
+  /**
    * @see StatementBlock
    */
   createStatementBlock(
@@ -195,14 +206,14 @@ export class AstFactory {
   }
 
   /**
-   * @see VariableDeclaration
+   * @see VariableDefinition
    */
-  createVariableDeclaration(
-    letToken: Token,
-    nameToken: Token,
-    type?: TypeDefinition,
+  createVariableDefinition(
+    define: Token,
+    name: Identifier,
+    type?: Identifier,
     initialValue?: Expression,
-  ): VariableDeclaration {
-    return new VariableDeclaration(letToken, nameToken, type, initialValue);
+  ): VariableDefinition {
+    return new VariableDefinition(define, name, type, initialValue);
   }
 }

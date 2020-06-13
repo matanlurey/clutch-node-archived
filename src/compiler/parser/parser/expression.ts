@@ -17,13 +17,19 @@ import { PropertyExpression } from '../ast/expression/property';
 import { DiagnosticCode } from '../diagnostic';
 import { OperatorParser } from './operator';
 
+/**
+ * Partially implementations parsing, just for expressions.
+ *
+ * Exists soley to be standalone testable, as well to be extended by the
+ * statement parser, which needs the underlying capability to parse expressions.
+ */
 export class ExpressionParser extends OperatorParser {
   parseExpression(): Expression {
     return this.parseAssignment();
   }
 
   /**
-   * Parses an identifier, or reports an error and returns a synthetic identifier.
+   * Parses an identifier, or reports an error and returns an error identifier.
    */
   protected parseIdentifier(): Identifier {
     if (this.match(Type.identifier)) {

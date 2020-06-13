@@ -23,7 +23,13 @@ export class Lexer {
   private program!: Scanner;
 
   constructor(
-    private readonly keywords = new Set(['func', 'if', 'let', 'then']),
+    private readonly keywords = new Set([
+      'func',
+      'if',
+      'let',
+      'return',
+      'then',
+    ]),
   ) {}
 
   tokenize(program: Scanner): Token[] {

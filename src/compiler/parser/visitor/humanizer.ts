@@ -3,7 +3,6 @@ import { OperatorType, RecoveryNode } from '../ast/ast';
 import { FunctionDeclaration } from '../ast/declaration/function';
 import { Parameter, ParameterList } from '../ast/declaration/parameter';
 import { TypeDefinition } from '../ast/declaration/type';
-import { VariableDeclaration } from '../ast/declaration/variable';
 import { BinaryExpression } from '../ast/expression/binary';
 import { CallExpression } from '../ast/expression/call';
 import { ConditionalExpression } from '../ast/expression/conditional';
@@ -14,6 +13,8 @@ import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
 import { PropertyExpression } from '../ast/expression/property';
 import { StatementBlock } from '../ast/statement/block';
+import { ReturnStatement } from '../ast/statement/return';
+import { VariableDefinition } from '../ast/statement/variable';
 import { CompilationUnit } from '../ast/unit';
 import { AstVisitor } from './visitor';
 
@@ -263,6 +264,14 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     return context.write(`ಠ_ಠ`);
   }
 
+  visitReturnStatement(
+    astNode: ReturnStatement,
+    context = new StringWriter(),
+  ): StringWriter {
+    context.write('return ');
+    return astNode.expression.accept(this, context);
+  }
+
   visitStatementBlock(
     astNode: StatementBlock,
     context = new StringWriter(),
@@ -284,11 +293,12 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     return context.write(astNode.typeName);
   }
 
-  visitVariableDeclaration(
-    astNode: VariableDeclaration,
+  visitVariableDefinition(
+    astNode: VariableDefinition,
     context = new StringWriter(),
   ): StringWriter {
-    context.write(`let ${astNode.variableName}`);
+    context.write(`let `);
+    astNode.name.accept(this, context);
     if (astNode.type) {
       context.write(': ');
       astNode.type.accept(this, context);
