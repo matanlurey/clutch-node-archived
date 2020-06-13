@@ -96,11 +96,11 @@ describe('StringWriter', () => {
       .write('2.');
     expect(writer.toString()).toMatchInlineSnapshot(`
       "1.
-        A.  
-        B.  
-          i.    
-          ii.    
-        C.  
+      A.
+      B.
+      i.
+      ii.
+      C.
       2."
     `);
   });
