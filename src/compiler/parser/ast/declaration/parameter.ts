@@ -2,7 +2,7 @@
 import { Token } from '../../../lexer/token';
 import { AstVisitor } from '../../visitor/visitor';
 import { AstNode, Expression } from '../ast';
-import { TypeDefinition } from './type';
+import { Identifier } from '../expression/identifier';
 
 /**
  * Represents a parameter within a @see ParameterList.
@@ -21,7 +21,7 @@ export class Parameter extends AstNode {
    */
   constructor(
     private readonly nameToken: Token,
-    readonly type?: TypeDefinition,
+    readonly type?: Identifier,
     readonly value?: Expression,
   ) {
     super();
