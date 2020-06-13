@@ -1,9 +1,9 @@
 import { StringWriter } from '../../../common/string';
+import { Type } from '../../lexer/token';
 import { OperatorType, RecoveryNode } from '../ast/ast';
 import { FunctionDeclaration } from '../ast/declaration/function';
+import { ModuleDeclaration, ModuleRoot } from '../ast/declaration/module';
 import { Parameter, ParameterList } from '../ast/declaration/parameter';
-import { TypeDefinition } from '../ast/declaration/type';
-import { VariableDeclaration } from '../ast/declaration/variable';
 import { BinaryExpression } from '../ast/expression/binary';
 import { CallExpression } from '../ast/expression/call';
 import { ConditionalExpression } from '../ast/expression/conditional';
@@ -14,6 +14,8 @@ import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
 import { PropertyExpression } from '../ast/expression/property';
 import { StatementBlock } from '../ast/statement/block';
+import { ReturnStatement } from '../ast/statement/return';
+import { VariableDefinition } from '../ast/statement/variable';
 import { CompilationUnit } from '../ast/unit';
 import { AstVisitor } from './visitor';
 
@@ -126,7 +128,7 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     astNode: FunctionDeclaration,
     context = new StringWriter(),
   ): StringWriter {
-    context.write(`func ${astNode.functionName}`);
+    context.write(`func ${astNode.name.name}`);
     if (astNode.parameters) {
       astNode.parameters.accept(this, context);
     }
@@ -169,6 +171,37 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     context = new StringWriter(),
   ): StringWriter {
     return context.write(`${astNode.value}`);
+  }
+
+  visitModuleDeclaration(
+    astNode: ModuleDeclaration,
+    context = new StringWriter(),
+  ): StringWriter {
+    let indent = false;
+    if (astNode.keyword) {
+      context.write('module');
+      if (astNode.name) {
+        context.write(` ${astNode.name}`);
+      }
+      if (astNode.endBlock?.type === Type.pair) {
+        context.writeLine(' {');
+        context.indent(2);
+        indent = true;
+      }
+    }
+    astNode.declarations.forEach((d) => d.accept(this, context));
+    if (indent) {
+      context.indent(-2).writeLine().writeLine('}');
+    }
+    return context;
+  }
+
+  visitModuleRoot(
+    astNode: ModuleRoot,
+    context = new StringWriter(),
+  ): StringWriter {
+    astNode.modules.forEach((m) => m.accept(this, context));
+    return context;
   }
 
   visitParameter(
@@ -263,6 +296,14 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     return context.write(`ಠ_ಠ`);
   }
 
+  visitReturnStatement(
+    astNode: ReturnStatement,
+    context = new StringWriter(),
+  ): StringWriter {
+    context.write('return ');
+    return astNode.expression.accept(this, context);
+  }
+
   visitStatementBlock(
     astNode: StatementBlock,
     context = new StringWriter(),
@@ -277,18 +318,12 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     return context.writeLine().indent(-2).write('}');
   }
 
-  visitTypeDefinition(
-    astNode: TypeDefinition,
+  visitVariableDefinition(
+    astNode: VariableDefinition,
     context = new StringWriter(),
   ): StringWriter {
-    return context.write(astNode.typeName);
-  }
-
-  visitVariableDeclaration(
-    astNode: VariableDeclaration,
-    context = new StringWriter(),
-  ): StringWriter {
-    context.write(`let ${astNode.variableName}`);
+    context.write(`let `);
+    astNode.name.accept(this, context);
     if (astNode.type) {
       context.write(': ');
       astNode.type.accept(this, context);

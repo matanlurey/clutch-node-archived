@@ -1,8 +1,7 @@
 import { RecoveryNode } from '../ast/ast';
 import { FunctionDeclaration } from '../ast/declaration/function';
+import { ModuleDeclaration, ModuleRoot } from '../ast/declaration/module';
 import { Parameter, ParameterList } from '../ast/declaration/parameter';
-import { TypeDefinition } from '../ast/declaration/type';
-import { VariableDeclaration } from '../ast/declaration/variable';
 import { BinaryExpression } from '../ast/expression/binary';
 import { CallExpression } from '../ast/expression/call';
 import { ConditionalExpression } from '../ast/expression/conditional';
@@ -13,6 +12,8 @@ import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
 import { PropertyExpression } from '../ast/expression/property';
 import { StatementBlock } from '../ast/statement/block';
+import { ReturnStatement } from '../ast/statement/return';
+import { VariableDefinition } from '../ast/statement/variable';
 import { CompilationUnit } from '../ast/unit';
 
 export abstract class AstVisitor<R, C> {
@@ -40,6 +41,10 @@ export abstract class AstVisitor<R, C> {
 
   abstract visitLiteralNumber(astNode: LiteralNumber, context?: C): R;
 
+  abstract visitModuleDeclaration(astNode: ModuleDeclaration, context?: C): R;
+
+  abstract visitModuleRoot(astNode: ModuleRoot, context?: C): R;
+
   abstract visitParameter(astNode: Parameter, context?: C): R;
 
   abstract visitParameterList(astNode: ParameterList, context?: C): R;
@@ -52,12 +57,9 @@ export abstract class AstVisitor<R, C> {
 
   abstract visitRecoveryNode(astNode: RecoveryNode, context?: C): R;
 
+  abstract visitReturnStatement(astNode: ReturnStatement, context?: C): R;
+
   abstract visitStatementBlock(astNode: StatementBlock, context?: C): R;
 
-  abstract visitTypeDefinition(astNode: TypeDefinition, context?: C): R;
-
-  abstract visitVariableDeclaration(
-    astNode: VariableDeclaration,
-    context?: C,
-  ): R;
+  abstract visitVariableDefinition(astNode: VariableDefinition, context?: C): R;
 }

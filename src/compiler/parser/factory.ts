@@ -9,9 +9,8 @@ import {
   Statement,
 } from './ast/ast';
 import { FunctionDeclaration } from './ast/declaration/function';
+import { ModuleDeclaration, ModuleRoot } from './ast/declaration/module';
 import { Parameter, ParameterList } from './ast/declaration/parameter';
-import { TypeDefinition } from './ast/declaration/type';
-import { VariableDeclaration } from './ast/declaration/variable';
 import { BinaryExpression } from './ast/expression/binary';
 import { CallExpression } from './ast/expression/call';
 import { ConditionalExpression } from './ast/expression/conditional';
@@ -22,6 +21,8 @@ import { PostfixExpression } from './ast/expression/postfix';
 import { PrefixExpression } from './ast/expression/prefix';
 import { PropertyExpression } from './ast/expression/property';
 import { StatementBlock } from './ast/statement/block';
+import { ReturnStatement } from './ast/statement/return';
+import { VariableDefinition } from './ast/statement/variable';
 import { CompilationUnit } from './ast/unit';
 
 /**
@@ -75,15 +76,15 @@ export class AstFactory {
    * @see FunctionDeclaration
    */
   createFunctionDeclaration(
-    funcToken: Token,
-    nameToken: Token,
+    keyword: Token,
+    name: Identifier,
     parameters?: ParameterList,
-    returnType?: TypeDefinition,
+    returnType?: Identifier,
     statements?: StatementBlock,
   ): FunctionDeclaration {
     return new FunctionDeclaration(
-      funcToken,
-      nameToken,
+      keyword,
+      name,
       parameters,
       returnType,
       statements,
@@ -123,11 +124,25 @@ export class AstFactory {
   }
 
   /**
+   * @see ModuleDeclaration
+   */
+  createModuleDeclaration(declarations: Declaration[]): ModuleDeclaration {
+    return new ModuleDeclaration(declarations);
+  }
+
+  /**
+   * @see ModuleRoot
+   */
+  createModuleRoot(modules: ModuleDeclaration[], endOfFile: Token): ModuleRoot {
+    return new ModuleRoot(modules, endOfFile);
+  }
+
+  /**
    * @see Parameter
    */
   createParameter(
     nameToken: Token,
-    type?: TypeDefinition,
+    type?: Identifier,
     value?: Expression,
   ): Parameter {
     return new Parameter(nameToken, type, value);
@@ -177,6 +192,16 @@ export class AstFactory {
   }
 
   /**
+   * @see ReturnStatement
+   */
+  createReturnStatement(
+    keyword: Token,
+    expression: Expression,
+  ): ReturnStatement {
+    return new ReturnStatement(keyword, expression);
+  }
+
+  /**
    * @see StatementBlock
    */
   createStatementBlock(
@@ -188,21 +213,14 @@ export class AstFactory {
   }
 
   /**
-   * @see TypeDefinition
+   * @see VariableDefinition
    */
-  createTypeDefinition(name: Token): TypeDefinition {
-    return new TypeDefinition(name);
-  }
-
-  /**
-   * @see VariableDeclaration
-   */
-  createVariableDeclaration(
-    letToken: Token,
-    nameToken: Token,
-    type?: TypeDefinition,
+  createVariableDefinition(
+    define: Token,
+    name: Identifier,
+    type?: Identifier,
     initialValue?: Expression,
-  ): VariableDeclaration {
-    return new VariableDeclaration(letToken, nameToken, type, initialValue);
+  ): VariableDefinition {
+    return new VariableDefinition(define, name, type, initialValue);
   }
 }

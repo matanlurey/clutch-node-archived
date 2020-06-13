@@ -1,47 +1,43 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { Token } from '../../../lexer/token';
 import { AstVisitor } from '../../visitor/visitor';
-import { Declaration, Expression } from '../ast';
-import { TypeDefinition } from './type';
+import { Expression, Statement } from '../ast';
+import { Identifier } from '../expression/identifier';
 
 /**
  * Represents a variable declaration.
  */
-export class VariableDeclaration extends Declaration {
+export class VariableDefinition extends Statement {
   /**
    * Creates a new variable declaration.
    *
    * This constructor is not intended to be used directly; @see AstFactory.
    *
-   * @param letToken Token "let".
+   * @param define Token "let".
    * @param nameToken Name of the variable.
    * @param type If the variable has an explicit type, the type.
    * @param initalValue If the variable has an initial value, the expression.
    */
   constructor(
-    private readonly letToken: Token,
-    private readonly nameToken: Token,
-    readonly type?: TypeDefinition,
+    private readonly define: Token | undefined,
+    readonly name: Identifier,
+    readonly type?: Identifier,
     readonly initalValue?: Expression,
   ) {
     super();
   }
 
   accept<R, C>(visitor: AstVisitor<R, C>, context?: C): R {
-    return visitor.visitVariableDeclaration(this, context);
+    return visitor.visitVariableDefinition(this, context);
   }
 
   get firstToken(): Token {
-    return this.letToken;
+    return this.define || this.name.firstToken;
   }
 
   get lastToken(): Token {
     return (
-      this.initalValue?.lastToken || this.type?.lastToken || this.nameToken
+      this.initalValue?.lastToken || this.type?.lastToken || this.name.lastToken
     );
-  }
-
-  get variableName(): string {
-    return this.nameToken.lexeme;
   }
 }

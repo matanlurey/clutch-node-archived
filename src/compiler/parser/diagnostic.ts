@@ -137,6 +137,11 @@ export class DiagnosticCode {
     DiagnosticCategory.error,
   );
 
+  static readonly SYNTAX_EXPECTED_CURLY = new DiagnosticCode(
+    'SYNTAX_EXPECTED_CURLY',
+    DiagnosticCategory.error,
+  );
+
   static readonly SYNTAX_EXPECTED_ELSE = new DiagnosticCode(
     'SYNTAX_EXPECTED_ELSE',
     DiagnosticCategory.error,
