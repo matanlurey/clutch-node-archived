@@ -35,4 +35,8 @@ export class Identifier extends Expression {
   get name(): string {
     return this.token.lexeme;
   }
+
+  toString(): string {
+    return this.name;
+  }
 }

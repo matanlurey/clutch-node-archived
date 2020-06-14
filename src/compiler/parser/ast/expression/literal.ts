@@ -24,6 +24,10 @@ export abstract class LiteralExpression<
    * Value of the expression (as parsed).
    */
   abstract get value(): V;
+
+  toString(): string {
+    return `${this.value}`;
+  }
 }
 
 /**
@@ -65,5 +69,26 @@ export class LiteralNumber extends LiteralExpression<number> {
 
   accept<R, C>(visitor: AstVisitor<R, C>, context?: C): R {
     return visitor.visitLiteralNumber(this, context);
+  }
+}
+
+/**
+ * Represents a literal string.
+ */
+export class LiteralString extends LiteralExpression<string> {
+  /**
+   * Creates a literal string expression.
+   *
+   * This constructor is not intended to be used directly; @see AstFactory.
+   *
+   * @param literal Token as parsed.
+   * @param value Value as parsed.
+   */
+  constructor(literal: Token, readonly value: string) {
+    super(literal);
+  }
+
+  accept<R, C>(visitor: AstVisitor<R, C>, context?: C): R {
+    return visitor.visitLiteralString(this, context);
   }
 }

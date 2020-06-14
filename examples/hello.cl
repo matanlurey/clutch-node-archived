@@ -1,2 +1,3 @@
-// Basic function.
-main() -> {}
+func main() -> {
+  print('Hello World')
+}

@@ -378,6 +378,11 @@ export class ExpressionParser extends OperatorParser {
         return this.factory.createLiteralBoolean(token, true);
       } else if (token.lexeme === 'false') {
         return this.factory.createLiteralBoolean(token, false);
+      } else if (token.lexeme.startsWith("'")) {
+        return this.factory.createLiteralString(
+          token,
+          token.lexeme.substring(1, token.lexeme.length - 1),
+        );
       } else {
         return this.factory.createLiteralNumber(token, Number(token.lexeme));
       }
