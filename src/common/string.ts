@@ -23,6 +23,7 @@ export const enum Characters {
   // Symbols.
   $EXCLAIM = 33,
   $PERCENT = 37,
+  $QUOTE = 39,
   $AMPERSAND = 38,
   $PIPE = 124,
   $STAR = 42,

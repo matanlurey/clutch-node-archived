@@ -6,7 +6,7 @@ import {
   DiagnosticReporter,
 } from '../../../src/compiler/parser/diagnostic';
 import { ModuleParser } from '../../../src/compiler/parser/parser/module';
-import { Humanizer } from '../../../src/compiler/parser/visitor/humanizer';
+import { HumanWriterVisitor } from '../../../src/compiler/parser/visitor/humanizer';
 
 function parser(program: string): ModuleParser {
   const source = new SourceFile(program, 'module_test.ts');
@@ -16,7 +16,7 @@ function parser(program: string): ModuleParser {
 }
 
 describe('should', () => {
-  const humanizer = new Humanizer();
+  const humanizer = new HumanWriterVisitor();
 
   function parse(program: string): string {
     return parser(program).parseModuleRoot().accept(humanizer).toString();
@@ -63,8 +63,8 @@ describe('should', () => {
   });
 
   it('parses a function with a non-empty body', () => {
-    expect(parse('func main() -> {\n' + '  print(1)\n' + '}\n')).toBe(
-      'func main() -> {\n' + '  print(1)\n' + '}',
+    expect(parse('func main() -> {\n' + "  print('Hello')\n" + '}\n')).toBe(
+      'func main() -> {\n' + "  print('Hello')\n" + '}',
     );
   });
 });

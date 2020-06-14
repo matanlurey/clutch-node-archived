@@ -53,6 +53,29 @@ describe('should scan a number: ', () => {
   });
 });
 
+describe('should scan a string: ', () => {
+  it('empty', () => {
+    expect(tokenize("''")).toEqual<Tokenish[]>([
+      { offset: 0, type: Type.literal, lexeme: "''" },
+      { offset: 2, type: Type.eof, lexeme: '' },
+    ]);
+  });
+
+  it('single-line', () => {
+    expect(tokenize("'Hello'")).toEqual<Tokenish[]>([
+      { offset: 0, type: Type.literal, lexeme: "'Hello'" },
+      { offset: 7, type: Type.eof, lexeme: '' },
+    ]);
+  });
+
+  it('multi-line', () => {
+    expect(tokenize("'Hello\nWorld'")).toEqual<Tokenish[]>([
+      { offset: 0, type: Type.literal, lexeme: "'Hello\nWorld'" },
+      { offset: 13, type: Type.eof, lexeme: '' },
+    ]);
+  });
+});
+
 describe('should scan a boolean: ', () => {
   it('true', () => {
     expect(tokenize('true')).toEqual<Tokenish[]>([

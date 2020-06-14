@@ -9,20 +9,23 @@ import { CallExpression } from '../ast/expression/call';
 import { ConditionalExpression } from '../ast/expression/conditional';
 import { GroupExpression } from '../ast/expression/group';
 import { Identifier } from '../ast/expression/identifier';
-import { LiteralBoolean, LiteralNumber } from '../ast/expression/literal';
+import {
+  LiteralBoolean,
+  LiteralNumber,
+  LiteralString,
+} from '../ast/expression/literal';
 import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
 import { PropertyExpression } from '../ast/expression/property';
 import { StatementBlock } from '../ast/statement/block';
 import { ReturnStatement } from '../ast/statement/return';
 import { VariableDefinition } from '../ast/statement/variable';
-import { CompilationUnit } from '../ast/unit';
 import { AstVisitor } from './visitor';
 
 /**
  * An AST Vistior that inputs and outputs a @see StringWriter instance.
  */
-export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
+export class HumanWriterVisitor extends AstVisitor<StringWriter, StringWriter> {
   visitBinaryExpression(
     astNode: BinaryExpression,
     context = new StringWriter(),
@@ -101,17 +104,6 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     return context.write(')');
   }
 
-  visitCompilationUnit(
-    astNode: CompilationUnit,
-    context = new StringWriter(),
-  ): StringWriter {
-    astNode.declarations.forEach((declaration) => {
-      declaration.accept(this, context);
-      context.writeLine();
-    });
-    return context;
-  }
-
   visitConditionalExpression(
     astNode: ConditionalExpression,
     context = new StringWriter(),
@@ -171,6 +163,13 @@ export class Humanizer extends AstVisitor<StringWriter, StringWriter> {
     context = new StringWriter(),
   ): StringWriter {
     return context.write(`${astNode.value}`);
+  }
+
+  visitLiteralString(
+    astNode: LiteralString,
+    context = new StringWriter(),
+  ): StringWriter {
+    return context.write(`'${astNode.value}'`);
   }
 
   visitModuleDeclaration(

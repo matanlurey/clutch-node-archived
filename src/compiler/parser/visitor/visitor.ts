@@ -7,21 +7,22 @@ import { CallExpression } from '../ast/expression/call';
 import { ConditionalExpression } from '../ast/expression/conditional';
 import { GroupExpression } from '../ast/expression/group';
 import { Identifier } from '../ast/expression/identifier';
-import { LiteralBoolean, LiteralNumber } from '../ast/expression/literal';
+import {
+  LiteralBoolean,
+  LiteralNumber,
+  LiteralString,
+} from '../ast/expression/literal';
 import { PostfixExpression } from '../ast/expression/postfix';
 import { PrefixExpression } from '../ast/expression/prefix';
 import { PropertyExpression } from '../ast/expression/property';
 import { StatementBlock } from '../ast/statement/block';
 import { ReturnStatement } from '../ast/statement/return';
 import { VariableDefinition } from '../ast/statement/variable';
-import { CompilationUnit } from '../ast/unit';
 
 export abstract class AstVisitor<R, C> {
   abstract visitBinaryExpression(astNode: BinaryExpression, context?: C): R;
 
   abstract visitCallExpression(astNode: CallExpression, context?: C): R;
-
-  abstract visitCompilationUnit(astNode: CompilationUnit, context?: C): R;
 
   abstract visitConditionalExpression(
     astNode: ConditionalExpression,
@@ -40,6 +41,8 @@ export abstract class AstVisitor<R, C> {
   abstract visitLiteralBoolean(astNode: LiteralBoolean, context?: C): R;
 
   abstract visitLiteralNumber(astNode: LiteralNumber, context?: C): R;
+
+  abstract visitLiteralString(astNode: LiteralString, context?: C): R;
 
   abstract visitModuleDeclaration(astNode: ModuleDeclaration, context?: C): R;
 

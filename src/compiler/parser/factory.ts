@@ -16,14 +16,17 @@ import { CallExpression } from './ast/expression/call';
 import { ConditionalExpression } from './ast/expression/conditional';
 import { GroupExpression } from './ast/expression/group';
 import { Identifier } from './ast/expression/identifier';
-import { LiteralBoolean, LiteralNumber } from './ast/expression/literal';
+import {
+  LiteralBoolean,
+  LiteralNumber,
+  LiteralString,
+} from './ast/expression/literal';
 import { PostfixExpression } from './ast/expression/postfix';
 import { PrefixExpression } from './ast/expression/prefix';
 import { PropertyExpression } from './ast/expression/property';
 import { StatementBlock } from './ast/statement/block';
 import { ReturnStatement } from './ast/statement/return';
 import { VariableDefinition } from './ast/statement/variable';
-import { CompilationUnit } from './ast/unit';
 
 /**
  * Delegate class for creating new instances of @see AstNode.
@@ -48,16 +51,6 @@ export class AstFactory {
     lastToken: Token,
   ): CallExpression {
     return new CallExpression(receiver, argumentList, lastToken);
-  }
-
-  /**
-   * @see CompilationUnit
-   */
-  createCompilationUnit(
-    declarations: Declaration[],
-    eof: Token,
-  ): CompilationUnit {
-    return new CompilationUnit(declarations, eof);
   }
 
   /**
@@ -121,6 +114,13 @@ export class AstFactory {
    */
   createLiteralNumber(literal: Token, value: number): LiteralNumber {
     return new LiteralNumber(literal, value);
+  }
+
+  /**
+   * @see LiteralString
+   */
+  createLiteralString(literal: Token, value: string): LiteralString {
+    return new LiteralString(literal, value);
   }
 
   /**

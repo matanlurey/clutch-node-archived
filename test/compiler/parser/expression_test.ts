@@ -6,7 +6,7 @@ import {
   DiagnosticReporter,
 } from '../../../src/compiler/parser/diagnostic';
 import { ExpressionParser } from '../../../src/compiler/parser/parser/expression';
-import { Humanizer } from '../../../src/compiler/parser/visitor/humanizer';
+import { HumanWriterVisitor } from '../../../src/compiler/parser/visitor/humanizer';
 
 function parser(program: string): ExpressionParser {
   const source = new SourceFile(program, 'expression_test.ts');
@@ -16,7 +16,7 @@ function parser(program: string): ExpressionParser {
 }
 
 describe('should', () => {
-  const humanizer = new Humanizer();
+  const humanizer = new HumanWriterVisitor();
 
   function parse(program: string): string {
     return parser(program).parseExpression().accept(humanizer).toString();
@@ -54,7 +54,7 @@ describe('should', () => {
             "type": "identifier",
           },
         },
-        "operator": 3,
+        "operator": "--",
         "operatorToken": Token {
           "error": false,
           "lexeme": "--",
@@ -78,7 +78,7 @@ describe('should', () => {
             "type": "identifier",
           },
         },
-        "operator": 5,
+        "operator": "--",
         "operatorToken": Token {
           "error": false,
           "lexeme": "--",
@@ -129,6 +129,12 @@ describe('should', () => {
     expect(parse('false')).toBe('false');
   });
 
+  it('parse string', () => {
+    expect(parse("''")).toBe("''");
+    expect(parse("'Hello'")).toBe("'Hello'");
+    expect(parse("'Hello\nWorld'")).toBe("'Hello\nWorld'");
+  });
+
   it('parse prefix expression', () => {
     expect(parser('!true').parseExpression()).toMatchInlineSnapshot(`
       PrefixExpression {
@@ -141,7 +147,7 @@ describe('should', () => {
           },
           "value": true,
         },
-        "operator": 2,
+        "operator": "!",
         "operatorToken": Token {
           "error": false,
           "lexeme": "!",
@@ -166,7 +172,7 @@ describe('should', () => {
             "type": "identifier",
           },
         },
-        "operator": 7,
+        "operator": "+",
         "right": Identifier {
           "token": Token {
             "error": false,

@@ -3,7 +3,7 @@ import { SourceFile } from '../../../src/common/source';
 import { Lexer } from '../../../src/compiler/lexer/lexer';
 import { DiagnosticReporter } from '../../../src/compiler/parser/diagnostic';
 import { StatementParser } from '../../../src/compiler/parser/parser/statement';
-import { Humanizer } from '../../../src/compiler/parser/visitor/humanizer';
+import { HumanWriterVisitor } from '../../../src/compiler/parser/visitor/humanizer';
 
 function parser(program: string): StatementParser {
   const source = new SourceFile(program, 'operator_test.ts');
@@ -15,7 +15,7 @@ function parser(program: string): StatementParser {
 }
 
 describe('should', () => {
-  const humanizer = new Humanizer();
+  const humanizer = new HumanWriterVisitor();
 
   function parse(program: string): string {
     return parser(program).parseStatement().accept(humanizer).toString();

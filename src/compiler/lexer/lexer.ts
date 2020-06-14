@@ -36,6 +36,7 @@ export class Lexer {
       'return',
       'then',
     ]),
+    private readonly reserved = new Set(['module']),
   ) {}
 
   tokenize(program: Scanner): Token[] {
@@ -112,6 +113,8 @@ export class Lexer {
         }
       case Characters.$COMMA: // ,
         return this.createToken(Type.symbol);
+      case Characters.$QUOTE: // '
+        return this.scanString();
       default:
         if (isWhiteSpace(character)) {
           this.position = this.program.position;
@@ -126,6 +129,21 @@ export class Lexer {
         this.error();
     }
     return;
+  }
+
+  /**
+   * Scans a string.
+   */
+  private scanString(): Token {
+    while (this.program.hasNext) {
+      if (this.program.match(Characters.$QUOTE)) {
+        const lexeme = this.substring();
+        return new Token(this.position - lexeme.length, Type.literal, lexeme);
+      }
+      this.program.advance();
+    }
+    // TODO: A better, recoverable error message.
+    this.error();
   }
 
   /**
@@ -159,6 +177,10 @@ export class Lexer {
       case 'false':
         return this.createToken(Type.literal, identifierOrKeyword);
       default:
+        if (this.reserved.has(identifierOrKeyword)) {
+          // TODO: Better error.
+          this.error();
+        }
         return this.keywords.has(identifierOrKeyword)
           ? this.createToken(Type.keyword, identifierOrKeyword)
           : this.createToken(Type.identifier, identifierOrKeyword);
