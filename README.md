@@ -5,6 +5,12 @@
 _Clutch_ is an expression-oriented and object-oriented modern programming
 language that compiles to terse, efficient, and modern JavaScript:
 
+```cl
+func fib(n: Number): Number -> {
+  return if n < 2 then n else fib(n - 1) + fib(n - 2)
+}
+```
+
 ```js
 // fib(n) -> if n < 2 then n else fib(n - 1) + fib(n- 2)
 function fib(n) {
@@ -18,14 +24,8 @@ _Clutch_'s goals:
 - Defaults that prefer immutability and optimizations.
 - Low overhead compilation and interpoability to and with JavaScript.
 
-## Grammar
+## Resources
 
-See [docs/grammar.md](docs/grammar.md).
-
-## TODO
-
-### Lexer
-
-- [ ] Scan hyphens prefixing numbers.
-- [ ] Scan hex (`0xN`), octal (`0oN`), binary (`0bN`) numbers.
-- [x] Scan identifiers or keywords, including `true` or `false`.
+- [Grammar](docs/grammar.md)
+- [Inspiration](docs/inspiration.md)
+- [TODO](docs/todo.md)
